@@ -116,11 +116,21 @@ study<-read.csv("data/Cottonmouth-Datasheet.csv")
 ```
 ## Study site
 
+```{r Video Code, message=FALSE, warning=FALSE}
+video_path  <- "data/"
+video_files <- list.files(video_path,
+                         pattern = "\\.mp4$",
+                         recursive = TRUE,
+                         all.files = FALSE,
+                         full.names = TRUE) 
+```
+
+<iframe width="720" height="480" src="`r video_files[1]`" align="middle" frameborder="0" allowfullscreen></iframe>
+
 Data were collected along the Cumberland River Bicentennial Trail (CRBT), Cheatham County, Tennessee, USA (36˚17’ N, 87˚05’W). The site is a mixture of lowland forest, slough wetlands, upland limestone bluffs, and rocky outcrops. Cottonmouths use the upland forest and limestone bluffs as overwintering sites and occupy the lowland forest slough during the active season. The site is bordered by limestone bluffs and backwater streams along the northern portions, the Cumberland River along the west and south, and crop fields and urban development along the southern portions. These landscape features appear to largely isolate the population from dispersal and unpublished telemetry data (Smith, 2009; Fulbright, 2014) noted that snakes did not leave the approximately 76 hectare study area.  
 
 ```{r Interactive Ploty Map,  message=FALSE, warning=FALSE, cache = TRUE}
 #Setting Up Coordinates
-
 coord<-cbind(study$UTM_mE, study$UTM_mN)
 coord_locations<-SpatialPoints(coord,
                                proj4string = CRS("+proj=utm +zone=16 +datum=WGS84"))
@@ -159,12 +169,11 @@ autoplot(raster_utm, expand = TRUE) + theme_bw() +
 
 The habitat types found within the study area are the buttonbush slough in the central portion (12.6 ha), characterized by relatively open canopy, deeper water (50-150 cm), and mats of floating vegetation (Hydrocotyle ranunculoides & Ludwigia palustris) scattered throughout the slough. An open water habitat (> 100cm) is located toward the western portion of the study area. The seasonally flooded lowland forest (20.9 ha), dominated by red maples (Acer rubrum), has the denser canopy closure for the wetland, and is located between the slough and upland forest. Toward the southern portion between the slough and crop fields is a transitional edge area (15.4 ha) dominated by dense grass vegetation and occasionally floods (<10cm) in some portions throughout the year.  The upland forest habitat (16.3 ha) was dominated by oak trees (Quercus sp.) and had dense canopy closure and higher percentage of bare soil. Three main streams flow into the slough from the upland forest and provide a permanent source of water to the slough, along with periodic flooding from the Cumberland River, and groundwater seepage. A constructed levee divides the slough from adjacent crop fields, and during the fall waterfowl hunt, a culvert is opened from the levee to reduce the flooded areas.
 
+### Hydrology Plots {.tabset}
 ```{r Hydro Graphs, fig.height=8, fig.width=10}
 gauge<-read.csv("data/GaugeData-USGS.csv")
 gauge[,2]<-as.Date(gauge[,2])
 gauge[,4]<-gauge[,3]*0.3048
-
-p_list <-list()
 
 p1<-ggplot(gauge, aes(x =gauge$datetime, y= gauge$V4))+
   geom_line(color = "blue")+
@@ -215,18 +224,17 @@ p2<-ggplot(discharge, aes(x =discharge$datetime, y= discharge$V4))+
 p2<-p2+scale_x_date(breaks=date_breaks("6 months"), labels = date_format("%b %y"))
 
 hydrogrid1<-plot_grid(p1,p2, ncol = 1, nrow = 2)
-
-p_list[[1]] <-list(hydrogrid, "Colored Plot")
-p_list[[2]] <-list(hydrogrid1, "Black and White Plot")
 ```
-### Hydrology Plots {.tabset}
-```{r tabs script, fig.height=8, fig.width=10}
-for (i in seq_along(p_list)){
-  tmp <- p_list[[i]]
-  cat("####", tmp[[2]], "\n")
-  print(tmp[1])
-  cat(' \n\n')
-}
+#### Colored tab
+```{r colored hydrograph, fig.height=8, fig.width=10, message=FALSE, warning=FALSE}
+hydrogrid
+```
+
+**Figure 1** (above) Hydrographs of the annual hydrology of the Cumberland River below Cheatham Dam, TN recorded at 36°19'22.26" N & 87°13'41.73" W, and Sycamore Creek Near Ashland City, TN (below) recorded at 36°19'11.89" N, & 87°03'04.29"W. Both waterways flow into Cumberland River Bicentennial Trail riverine wetland slough and were recorded within 8 km from the study site. Information was provided by the USGS National Water Information System (https://waterdata.usgs.gov/nwis).
+
+#### Black and White tab
+```{r black and white hydrograph, fig.height=8, fig.width=10, message=FALSE, warning=FALSE}
+hydrogrid1
 ```
 
 **Figure 1** (above) Hydrographs of the annual hydrology of the Cumberland River below Cheatham Dam, TN recorded at 36°19'22.26" N & 87°13'41.73" W, and Sycamore Creek Near Ashland City, TN (below) recorded at 36°19'11.89" N, & 87°03'04.29"W. Both waterways flow into Cumberland River Bicentennial Trail riverine wetland slough and were recorded within 8 km from the study site. Information was provided by the USGS National Water Information System (https://waterdata.usgs.gov/nwis).
@@ -236,7 +244,10 @@ for (i in seq_along(p_list)){
 
 We conducted visual encounter surveys during the active seasons (April – October) and snakes were captured using tongs and retained in plastic restraining tubes (Midwest Tongs, Greenwood, MO, USA). For individual identification, each snake was implanted subcutaneously with a Passive Integrated Transponder (PIT) tag (Biomark, Boise, ID, USA) on the ventral side, posterior to midbody. Tags and implant syringes were soaked in Benzalkonium Chloride (Benz-all; VetPro, Northfield, MN, USA) for 2 – 3 minutes prior to tag implantation, and an antiseptic liquid bandage (Vetclose, Portland, ME, USA) was applied to the insertion area to facilitate healing. Snout-vent length (SVL) and tail lengths (TL) were measured, and snakes were sexed by either everting hemipenes or by probing (Blanchard & Finister, 1933). Individuals were considered adults if their SVL were greater than 500-mm, individuals with an SVL between 300 – 500-mm were considered juveniles (Burkett, 1966; Eskew et al., 2009), and neonates were considered to be individuals less than 300-mm SVL (Koons et al., 2009). Body mass was measured with a Pesola spring scale. The handling and PIT tagging of individuals was approved by the Institution Animal Care and Use Committee at Austin Peay State University (IACUC Protocol Approval Number XXX-XXX ).
 
-Habitat selection was quantified by recording a suite of biotic and abiotic environmental variables along a transitional wetland gradient from terrestrial to aquatic habitat, (Table 1) at the location in which the individual was first sighted. A 1-m2 quadrat was used to assess the habitats available compared to those selected by cottonmouths; a combination of randomly chosen and fixed sites were measured. A randomly chosen comparison site was paired with each snake location using the Random Points Tool in ArcMap 10.6.1 (ESRI, Redlands, CA, USA) within the study area. Secondarily, a grid of 40 systematically selected fixed sites were placed ~200-m from one another using the Fishnet Tool in ArcMap 10.6.1, to assure all available habitats in the study area were quantified. 
+Habitat selection was quantified by recording a suite of biotic and abiotic environmental variables along a transitional wetland gradient from terrestrial to aquatic habitat, (Table 1) at the location in which the individual was first sighted. A 1-m2 quadrat was used to assess the habitats available compared to those selected by cottonmouths; a combination of randomly chosen and fixed sites were measured. A randomly chosen comparison site was paired with each snake location using the Random Points Tool in ArcMap 10.6.1 (ESRI, Redlands, CA, USA) within the study area. Secondarily, a grid of 40 systematically selected fixed sites were placed ~200-m from one another using the Fishnet Tool in ArcMap 10.6.1, to assure all available habitats in the study area were quantified.
+
+![Photo of Study Site, 2019](data/swamp.jpg)
+
 
 To test if cottonmouths are generalist or specialist in habitat selection, we used the National Land Cover Dataset (NLCD, 2011), by the USGS downloaded from Google Earth Engine (https://earthengine.google.com/), to identify the habitats cottonmouths were located within. Land cover types were generalized to three categories; Terrestrial, Aquatic, and Wetland.
 
@@ -312,13 +323,12 @@ female<- study %>% subset(Group == "FEMALE")
 juvenile<- study %>% subset(Group == "JUVENILE")
 YOY<- study %>% subset(Group == "YOY")
 ```
+
 We surveyed on 96 days during three-years (2013, 2014, & 2019) of field study and recorded sixteen environmental variables for the initial sightings of `r nrow(snake)` cottonmouths and `r nrow(habitat)` available habitat comparison sites (134 random and 40 systematic sites). Captured individuals included `r nrow(male)` adult males,`r nrow(female)` adult females, `r nrow(juvenile)` juveniles, and `r nrow(YOY)` neonates. Adult males averaged in `r mean(male$SVL)` ± `r sd(male$SVL)` mm in SVL, adult females `r mean(female$SVL)` ± `r sd(female$SVL)`mm, juveniles `r mean(juvenile$SVL)` ± `r sd(juvenile$SVL)` mm, and neonates `r mean(YOY$SVL)` ± `r sd(YOY$SVL)`mm. During spring (April – May) surveys we found 48 individuals during 20 outings to the study area, 84 individuals during 64 outings in the summer (June – August), and 17 individuals during 12 outings in the fall (September – October). 
 
 ## Habitat Selection: Ecological Niche 
 
-The first three principal components describing cottonmouth habitat choice collectively explained 43.7% of the variation within the environmental variable structure (Table 1). Environmental variables associated with PC-1 describe a terrestrial to aquatic gradient (Figure 2) where distance to water was positively associated, while percent water and water depth were negatively associated. PC-2 described availability of cover objects, where log diameter and fallen log cover were positively associated and PC-3 described vegetation cover, where vegetation cover was positively associated with cottonmouth habitat. Collectively, the three components explain an environmental gradient between flooded and non-flooded habitats along with available refuge cover, where cottonmouths had broad associations between the extremes of aquatic and terrestrial sites, and slight preferences to cover objects.
-
-The PERMANOVA/PERMDISP tests found a difference between cottonmouth habitat selection and available habitat within multivariate space (PERMANOVA; P< 0.001; Pseudo-F = 20.4; df = 1). Specifically, the results from the PERMDISP test showed that differences between cottonmouth sites and available habitat sites were attributed to the heterogeneous distribution of variance of the environmental variables between the two groups (PERMDISP; P<0.01; F = 25.44; df = 1). The average distance to centroid location among ellipsoids in multivariate space (Figure 2), based on PERMDISP, found that available habitat was 4.02, while cottonmouth habitat was 3.26. The PERMANOVA/PERMDISP tests confirmed observations from PCA, in that the heterogeneous dispersion between cottonmouth habitat selection and available habitat showed that cottonmouths used habitat resources differently than the occurrence of available habitat in the environment (Figure 2). In addition, the restricted distribution of sites used by cottonmouths, in relation to available habitat, was due to avoidance of upland habitats during the active season in favor of occupying aquatic-associated sites (likely foraging sites) within the more hydrologically-dynamic slough.
+List of the variables of the dataset for Multivariate and random forest analyses. 
 
 ```{r Variable Exclusion, message=FALSE, warning=FALSE, include=FALSE}
 glimpse(study)
@@ -360,9 +370,9 @@ pcomp<-group_by(group, Group)%>%
             Comp.3 = mean(Comp.3))
 ```
 
-```{r Multivariate PCA Plots, fig.height=8, fig.width=12, message=FALSE, warning=FALSE}
-pp_list <-list()
+### PCA {.tabset}
 
+```{r Multivariate PCA Plots, fig.height=8, fig.width=12, message=FALSE, warning=FALSE}
 # Colored Plot
 gg_scatter1<-ggplot(data = s1, aes(Comp.1, Comp.2, color = Type))+
   geom_point(size = 3.1)+
@@ -428,40 +438,48 @@ gg_scatter2<-ggplot(data = s1, aes(Comp.1, Comp.2, color = Type))+
       size=0.5))
 
 pp<-gg_scatter2+ geom_point(data = pcomp, aes(pcomp$Comp.1, pcomp$Comp.2, shape = Group, color =Group), alpha = 1, size =7)+
-  scale_shape_manual(values = c(15,19,18,17))+
+  scale_shape_manual(values = c(19,19,18,17))+
   annotate("label", x = 0.5, y = 0.5, label = "FEMALE", color ="#252525", size = 4.4)+
   annotate("label", x = -0.9, y = 1.1, label = "JUVENILE", color ="#252525", size = 4.4)+
   annotate("label", x = -0.5, y = -0.1, label = "MALE", color ="#252525", size = 4.4)+
   annotate("label", x = 0.15, y = 1.65, label = "NEONATE", color ="#252525",  size = 4.4)
 
 xdens1<-axis_canvas(pp, axis = "x")+
-geom_density(data =group, aes(Comp.1, fill = group$Group), alpha = 0.80, size =1, linetype= "dashed")+
-  scale_fill_manual(values = c("black", "#d9d9d9","#636363","#bdbdbd"))
+geom_density(data =group, aes(Comp.1, fill = group$Group, linetype = Group), alpha = 0.83, size =1)+
+  scale_fill_manual(values = c("black", "#d9d9d9","#636363","#bdbdbd"))+
+  scale_linetype_manual(values = c("blank", "solid", "dashed", "dotted"))
 
 ydens1<-axis_canvas(pp, axis = "y", coord_flip = TRUE)+
-geom_density(data =group, aes(Comp.2, fill = group$Group), alpha = 0.80, size =1, linetype= "dashed")+
+geom_density(data =group, aes(Comp.2, fill = group$Group, linetype = Group), alpha = 0.83, size =1)+
   scale_fill_manual(values = c("black", "#d9d9d9","#636363","#bdbdbd"))+
-  coord_flip()
+  scale_linetype_manual(values = c("blank", "solid", "dashed", "dotted"))+
+  coord_flip()+
+  annotate("label", x = -2.4, y = 0.12, label = "FEMALE", color ="#252525", size = 3.2)+
+  annotate("label", x = 2.5, y = 0.12, label = "JUVENILE", color ="#252525", size = 3.2, alpha = 0.25)+
+  annotate("label", x = 1.2, y = 0.26, label = "MALE", color ="#252525", size = 3.2)+
+  annotate("label", x = 3.3, y = 0.17, label = "NEONATE", color ="#252525",  size = 3.2)
 
 pp1<-insert_xaxis_grob(pp, xdens1, grid::unit(0.2, "null"), position= "top")
 pp2<-insert_yaxis_grob(pp1,ydens1, grid::unit(0.2, "null"), position = "right")
 
 bw<-ggdraw(pp2)
-
-#Merging into tab
-pp_list[[1]] <-list(Colored, "Colored Plot")
-pp_list[[2]] <-list(bw, "Black and White Plot")
 ```
 
-### PCA Plots {.tabset}
-```{r PCA tabs script, fig.height=8, fig.width=10}
-for (i in seq_along(pp_list)){
-  tmp <- pp_list[[i]]
-  cat("####", tmp[[2]], "\n")
-  print(tmp[1])
-  cat(' \n\n')
-}
+#### Colored tab
+```{r PCA colored, fig.height=8, fig.width=12, message=FALSE, warning=FALSE}
+Colored
 ```
+
+**Figure 2:** Principal Component Analysis (PCA) of 16 environmental variables measured for A. piscivorus (cottonmouth) and available habitat comparison sites. Ellipses represent 95% confidence intervals for cottonmouth (small grey points) and available habitat (small black points). Mean component scores of the intra-specific cottonmouth conspecifics; adult males (blue/diamond/dark grey), adult females (red/ large circle/ black), juveniles (green/ large cirlce/ light grey), and neonates (purple/ triangle/ medium grey). Point density curves for conspecific groups are represented for PC-1 (above), and PC-2 (right). Linetypes of the density curves are; neonates with dotted lines, juveniles with solid lines, males with dashed, and females with no outline. PCA expresses cottonmouths to share broad similarities with the available habitat comparison sites, while neonates expressed some degree of separation toward the other cottonmouth conspecifics.
+
+#### Black and White tab
+```{r PCA black and white, fig.height=8, fig.width=12, message=FALSE, warning=FALSE}
+bw
+```
+
+**Figure 2:** Principal Component Analysis (PCA) of 16 environmental variables measured for A. piscivorus (cottonmouth) and available habitat comparison sites. Ellipses represent 95% confidence intervals for cottonmouth (small grey points) and available habitat (small black points). Mean component scores of the intra-specific cottonmouth conspecifics; adult males (blue/diamond/dark grey), adult females (red/ large circle/ black), juveniles (green/ large cirlce/ light grey), and neonates (purple/ triangle/ medium grey). Point density curves for conspecific groups are represented for PC-1 (above), and PC-2 (right). Linetypes of the density curves are; neonates with dotted lines, juveniles with solid lines, males with dashed, and females with no outline. PCA expresses cottonmouths to share broad similarities with the available habitat comparison sites, while neonates expressed some degree of separation toward the other cottonmouth conspecifics.
+
+## PCA Loadings and PERMANOVA/ PERMDISP
 
 **Table 1:** Factor loadings from principal component analysis of environmental variables measured for cottonmouths and general habitat comparitsion sites
 
@@ -494,24 +512,6 @@ gt(loadings, rownames_to_stub = TRUE, )%>%
     group = "PCA Statistics",rows = c(17,18))
 ```
 
-```{r CowPLot, echo=TRUE, fig.height=8, fig.width=12, message=FALSE, warning=FALSE}
-xdens<-axis_canvas(p, axis = "x")+
-geom_density(data =group, aes(Comp.1, fill = group$Group), alpha = 0.3, size =1)+
-scale_fill_manual(values = c("#F8766D","#7CAE00","#00BFC4", "#C77CFF"))
-
-ydens<-axis_canvas(p, axis = "y", coord_flip = TRUE)+
-geom_density(data =group, aes(Comp.2, fill = group$Group), alpha = 0.3, size =1)+
-  scale_fill_manual(values = c("#F8766D","#7CAE00","#00BFC4", "#C77CFF"))+
-  coord_flip()
-
-p1<-insert_xaxis_grob(p, xdens, grid::unit(0.2, "null"), position= "top")
-p2<-insert_yaxis_grob(p1,ydens, grid::unit(0.2, "null"), position = "right")
-
-ggdraw(p2)
-```
-
-**Figure 2:** Principal component analysis of the environmental variables measured for A. piscivorus (cottonmouth) and the available habitat comparison sites. Ellipses represent 95% confidence intervals for cottonmouth (grey) and available habitat (black). Mean principal component scores of the intra-specific cottonmouth conspecifics; adult males (blue), adult females (red), juveniles (green), and neonates (purple). Density counts of the cottonmouth conspecifics represented for each PC score, with PC-1 cottonmouth conspecific density above the plot, and PC-2 cottonmouth conspecific density toward the right of the plot.
-
 **Table 2:** Results of the multivariate statistal tests PERMANOVA/PERMDISP based on the Euclidean distance comparing cottonmouth habitat selected and general habitat available to the cottonmouth within the study area.
 ```{r PERMANOVA/PERMDISP Table, fig.height=4, fig.width=8, message=FALSE, warning=FALSE}
 #PERMANOVA
@@ -521,7 +521,7 @@ Perm1<-cbind(Perm1$aov.tab[1,4], Perm1$aov.tab[1,6])
 #PERMDISP
 dist<-dist(scale(s1[,c(2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,22)]))
 bd<-anova(betadisper(dist,s1$Type))
-betadisper(dist,s1$Type)
+beta<-betadisper(dist,s1$Type)
 bd1<-cbind(bd$`F value`, bd$`Pr(>F)`)
 bd1<-data.frame(bd1)
 bd1<-bd1[-2,]
@@ -545,11 +545,12 @@ gt(PermDisp, rownames_to_stub = TRUE)%>%
     source_note = "df = 1")
 ```
 
+Below, is the betadisper summary table that shows the average distance to the median of the multivariate space for each cottonmouth and available habitat sites recorded using the PERMDISP statistics.
+```{r Betadisper}
+beta
+```
+
 ## Habitat Selection: Intra-specific Differences 
-
-The ANOVA test on the principal component scores investigating intra-specific habitat selection differences among the cottonmouth population found no significant difference among groups within PC-1 and PC-3 (PC-1: df = 3,  F = 1.68, P = 0.17; PC-3: df = 3, F = 0.129, P = 0.94; Table 3). However, there was significance in habitat selection among cottonmouths within PC-2 (PC-2: df = 3, F = 3.619, P= 0.015; Table 3).  The Tukey’s HSD test, on the ANOVA of PC-2, found that mean component scores of adult females were significantly different than YOY (Tukey’s HSD; P = 0.023). Adult females were more negatively associated with thermal quality sites (PC-2) compared to YOY with a mean component score difference of 1.25.  
-
-Linear regression comparing PC-1 and body size (SVL) found a significant negative correlation (F = 3.29; P <0.01; d.f. = 1; Fig 2), indicating that larger individuals were found in more flooded habitat sites compared to smaller individuals. Caution must be used in interpreting the results as this relationship as it had a low explanatory power in PC-1 (19.6%) and R2 (0.03) value.
 
 **Table 3:**Mean component scores of PCA on intra-specific habitat selection within cottonmouths with ANOVAs used to compare conspecific groups.
 
@@ -582,6 +583,7 @@ gt(pcomp, rownames_to_stub = TRUE)%>%
     group = "ANOVA",rows = c(5,6))
 ```
 
+Below are the summary tables for the Tukey HSD tests for each principal component.
 ```{r Tukey HSD, message=FALSE, warning=FALSE}
 #PC-1
 TukeyHSD(C1)
@@ -647,18 +649,14 @@ plot_grid(LR1, LR2, LR3, labels=c("A)", "B)", "C)"), ncol = 3, nrow = 1)
 
 **Figure 2 A & B:** Linear regression of Principal Component scores for the comparison of habitat selection among the intra-specific cottonmouth groups(Males, Females, Juveniles, and Neonates) and their snout-vent lengths.
 
+Below are the summary tables for the linear regression analysis comparing body size to each principal component.
 ```{r Linear Summary}
 summary(mod)
 summary(mod2)
 summary(mod3)
 ```
 
-
 ## Habitat Selection: Modeling Habitat Preference 
-
-Prior to developing the Random Forest models, we used a tested multicollinearity on the sixteen environmental variables and found that percent land and percent water were highly correlated as well as substrate, surface, and ambient temperatures. We chose to excluded percent land, surface temp, and substrate temp from the models. Random forest models (30-iterations) had a mean accuracy of 82.1% from cross-validation and an 83.6% mean accuracy from the OOB (Table 4).  In addition, the mean of the random forest model’s accuracy metrics had a 64.3% kappa (a measure of agreement between predicted presences and absences with actual presences and absences corrected for agreement that might be due to chance alone), 92.9% sensitivity (the percentage of presences correctly classified), 71.4% specificity (the percentage of absences correctly classified), and 87.5% for the area under the receiver operating characteristic curve (AUC) (Table 4) (Cutler et al. 2007). Cross-validation metrics all shared similar accuracies; however, the maximum RF model had an 84.4% OOB accuracy and 89.4% AUC supporting that we had a good predictive model (Table 4). Random forest models error rates stabilized at approximately 3,000 trees, indicating that 5,000 trees were adequate.  
-
-Our maximum-accuracy RF model identified that distance to water (cm), water depth (cm), percent bare soil (%), and percent water (%) were the most important predictors in identifying the occurrence of a cottonmouth within an area. The medium importance environmental variables were canopy closure (%), distance to a cover object (%), and percent floating vegetation (%). To clarify, the important predictor variables validate cottonmouths strong association to swamp habitat. Partial dependence found that the probability of occurrence of a cottonmouth was negatively related to site distance from a water source (Fig 4A). Response to water depth sharply increased from 0 – 20 cm and then decreased in occurrence as depth increased past 25 cm (Fig 4B). Response to water cover increased in occurrence and then plateaued past 10% cover and the response to bare soil cover increased up to 30% and then slightly declined in cottonmouth occurrence (Fig 4 C & D).
 
 ```{r Feature Selection by MIR, eval=FALSE, message=FALSE, warning=FALSE, include=FALSE}
 rf<-s1[,c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,22)]
@@ -796,7 +794,7 @@ A
 
 ```{r}
 #Went with the Full Model
-rf<-s1[,c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,22)]
+rf<-s1[,c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,19)]
 ```
 
 
@@ -854,7 +852,6 @@ OOB1<-c(a1$err.rate[6000,1],a2$err.rate[6000,1],a3$err.rate[6000,1],a4$err.rate[
        b9$err.rate[6000,1],b10$err.rate[6000,1],c1$err.rate[6000,1],c2$err.rate[6000,1],c3$err.rate[6000,1],c4$err.rate[6000,1],
        c5$err.rate[6000,1],c6$err.rate[6000,1],c7$err.rate[6000,1],c8$err.rate[6000,1],c9$err.rate[6000,1],c10$err.rate[6000,1])
 OOB<-c(1-min(OOB1),1-mean(OOB1), 1-max(OOB1))
-OOB1
 ```
 
 ```{r Cross-Validation}
@@ -922,11 +919,11 @@ gt(models)%>%
     source_note = "AUC = Area Under the Curve")
 ```
 
+Below are the summary tables for the maximum and mean random forest models of the 30-iteration models.
 ```{r Maximum RF Model}
 a7 # Maximum Accuracy
 a1 #Mean Accuracy
 ```
-
 
 ```{r Variable Importance}
 MDA<-randomForest::importance(a7, class = "SNAKE")
@@ -954,7 +951,7 @@ Q=ggplot(D, aes(x = reorder(Habitat_Variables, D$SNAKE), y = D$SNAKE))+
 Q<-Q+scale_fill_gradient2(low="white", high="black")
 ```
 
-```{r Partial Dependence Plots}
+```{r Partial Dependence Plots Set up}
 #RF a7
 plotx<-partial(a7, pred.var = "Dist..To.Water", pdp = T, center = T, plot = T, plot.engine = "ggplot2", type = "classification", which.class = "SNAKE", train = train, rug = T)
 
@@ -1020,54 +1017,202 @@ plot_grid(plot1, plot2,plot3,plot4,plot5,plot6, labels=c("A ", "B ", "C ","D ", 
 **Figure 4:** Partial dependance plots of the four most constributing variables (From mean decrease accuracy) with relative probability of cottonmouth habitat selection of a site within Middle Tennessee, USA. Distance to water (A), bare soil cover (B), rock cover (C), and water depth (D) were measured within and above a 1-m^2 quadrat from were a cottonmouth was located during visual encounter. Dashes on the x-axis indicate the deciles of the cottonmouth occurence for each environmental variables.
 
 # **Discussion**
-
-Cottonmouths are pretty generalist, manly sticking to the swamp, but can be found in the terrestrial zones of the study area. Also, there is a presence of an ontogenetic shift in both terrestrial to wetland habitat, as well as being near more cover objects.
+For the full link to the journal article of the research project follow link below:
+"Currently Under Review"
 
 # **References** 
-Anderson, M. J. 2017. Permutational Multivariate Analysis of Variance (PERMANOVA). Wiley StatsRef: Statistics Reference Online:1–15. 
+Adler G.H. & Wilson M.L. (1987). Demography of a habitat generalist, the white-footed mouse, in a heterogeneous environment. Ecology 68, 1785–1796. DOI: 10.2307/1939870
 
-Anderson, M. J., K. E. Ellingsen, and B. H. McArdle. 2006. Multivariate dispersion as a measure of beta diversity. Ecology Letters 9:683–693. 
+Amarasekare P. (2003). Competitive coexistence in spatially structured environments: A synthesis. Ecology Letters 6, 1109–1122. DOI: 10.1046/j.1461-0248.2003.00530.x
 
-Archer, K. J., and R. V. Kimes. 2008. Empirical characterization of random forest variable importance measures. Computational Statistics and Data Analysis 52:2249–2260. 
+Anderson M.J. (2001). A new method for non-parametric multivariate analysis of variance. Austral Ecology, 32–46. DOI: 10.1111/j.1442-9993.2001.01070
 
-Assis, J., B. Claro, A. Ramos, J. Boavida, and E. A. Serrão. 2013. Performing fish counts with a wide-angle camera, a promising approach reducing divers’ limitations. Journal of Experimental Marine Biology and Ecology 445:93–98. 
+Anderson M.J., Ellingsen K.E. & McArdle B.H. (2006). Multivariate dispersion as a measure of beta diversity. Ecology Letters 9, 683–693. DOI: 10.1111/j.1461-0248.2006.00926.x
 
-Blanchard, F, N., and B. Finister, E. 1933. A method of marking living snakes for future recognition, with a discussion of some problems and results. Ecology 14:334–347. 
+Ardia D.R. & Bildstein K.L. (2001). Sex-related differences in habitat use in wintering american kestrels. The Auk 118, 746–750. DOI: 10.2307/4089938
 
-Breiman, L. 2001. Random Forest. Machine Learning 45:5–32. 
+Assis J., Claro B., Ramos A., Boavida J. & Serrão E.A. (2013). Performing fish counts with a wide-angle camera, a promising approach reducing divers’ limitations. Journal of Experimental Marine Biology and Ecology 445, 93–98. DOI: 10.1016/j.jembe.2013.04.007
 
-Breiman, L., A. Cutler, A. Liaw, and M. Wiener. 2018. Breiman and Cutler’s Random Forests for Classification and Regression “randomForest.” CRAN. 
+Balcombe S.R., Bunn S.E., McKenzie-Smith F.J. & Davies P.M. (2005). Variability of fish diets between dry and flood periods in an arid zone floodplain river. Journal of Fish Biology 67, 1552–1567. DOI: 10.1111/j.1095-8649.2005.00858.x
 
-Brückner, A., and M. Heethoff. 2017. A chemo-ecologists’ practical guide to compositional data analysis. Chemoecology 27:33–46. 
+Barriga J.P. & Battini M.A. (2009). Ecological significances of ontogenetic shifts in the stream-dwelling catfish, hatcheria macraei (siluriformes, trichomycteridae), in a patagonian river. Ecology of Freshwater Fish 18, 395–405. DOI: 10.1111/j.1600-0633.2009.00356.x
 
-Burkett, Ray, D. 1966. Natural history of cottonmouth moccasin, <i>Agkistrodon piscivorus<i/> (Reptilia). University of Kansas Publications 17:435–491. 
+Beesley L., King A.J., Amtstaetter F., Koehn J.D., Gawne B., Price A., et al. (2012). Does flooding affect spatiotemporal variation of fish assemblages in temperate floodplain wetlands? Freshwater Biology 57, 2230–2246. DOI: 10.1111/j.1365-2427.2012.02865.x
 
-Cutler, D. R., T. C. Edwards, K. H. Beard, A. Cutler, T. Kyle, J. Gibson, J. J. Lawler, H. Beard, and T. Hess. 2007. Random Forests for Classification in Ecology Published by : Ecological Society of America. Ecology 88:2783–2792. 
+Blanchard F. & Finister E. (1933). A method of marking living snakes for future recognition, with a discussion of some problems and results. Ecology 14, 334–347
 
-Delgado-Baquerizo, M., A. Gallardo, F. Covelo, A. Prado-Comesaña, V. Ochoa, and F. T. Maestre. 2015. Differences in thallus chemistry are related to species-specific effects of biocrust-forming lichens on soil nutrients and microbial communities. Functional Ecology 29:1087–1098. 
+Bodie J.R. & Semlitsch R.D. (2000). Spatial and temporal use of floodplain habitats by lentic and lotic species of aquatic turtles. Oecologia 122, 138–146. DOI: 10.1007/PL00008830
 
-Dormann, C. F., J. Elith, S. Bacher, C. Buchmann, G. Carl, G. Carré, J. R. G. Marquéz, B. Gruber, B. Lafourcade, P. J. Leitão, T. Münkemüller, C. Mcclean, P. E. Osborne, B. Reineking, B. Schröder, A. K. Skidmore, D. Zurell, and S. Lautenbach. 2013. Collinearity: A review of methods to deal with it and a simulation study evaluating their performance. Ecography 36:027–046. 
+Bolnick D.I. (2004). Can intraspecific competition drive disruptive selection? An experimental test in natural populations of sticklebacks. Evolution 58, 608–618. DOI: 10.1111/j.0014-3820.2004.tb01683.x
 
-Eskew, E. A., J. D. Willson, and C. T. Winne. 2009. Ambush site selection and ontogenetic shifts in foraging strategy in a semi-aquatic pit viper, the Eastern cottonmouth. Journal of Zoology 277:179–186. 
+Bondavalli C. & Ulanowicz R.E. (1999). Unexpected effects of predators upon their prey: The case of the american alligator. Ecosystems 2, 49–63. DOI: 10.1007/s100219900057
 
-Frakes, R. A., R. C. Belden, B. E. Wood, and F. E. James. 2015. Landscape analysis of adult Florida panther habitat. PLoS ONE 10:1–18. 
+Breiman L. (2001). Random Forest. Machine Learning 45, 5–32
 
-Guttman, L. 1954. Some necessary conditions for common-factor analysis. Psychometrika 19:149–161. 
+Breiman L., Cutler A., Liaw A. & Wiener M. (2018). Breiman and Cutler’s Random Forests for Classification and Regression “randomForest”
 
-Hirzel, A. H., J. Hausser, D. Chessel, and N. Perrin. 2002. Ecological-niche factor analysis: How to compute habitat-suitability maps without absence data? Ecology 83:2027–2036. 
+Brinson M.M. (1993). Changes in the functioning of wetlands along environmental gradients. Wetlands 13, 65–74. DOI: 10.1007/BF03160866
 
-Koons, D. N., R. D. Birkhead, S. M. Boback, M. I. Williams, and M. P. Greene. 2009. The effect of body size on cottonmouth (Agkistrodon piscivorus) survival, recapture probability, and behavior in an Alabama swamp. Herpetological Conservation and Biology 4:221–235. 
+Büchi L. & Vuilleumier S. (2016). Ecological strategies in stable and disturbed environments depend on species specialisation. Oikos 125, 1408–1420. DOI: 10.1111/oik.02915
 
-Murphy, M. A., J. S. Evans, and A. Storfer. 2010. Quantifying Bufo boreas connectivity in Yellowstone National Park with landscape genetics. Ecology 91:252–261. 
+Burkett R.D. (1966). Natural history of cottonmouth moccasin, Agkistrodon piscivorus (Reptilia). University of Kansas Publications 17, 435–491
 
-Oksanen, J., M. Guillaume - Blanchet, F. Friendly, R. Kindt, P. Legendre, D. McGlinn, P. R. Minchin, R. B. O’Hara, G. L. Simpson, P. Solymos, M. Henry, H. Stevens, E. Szoecs, and H. Wagner. 2019. Community Ecology Package “vegan.” CRAN. 
+Butler M.A. & Losos J.B. (2002). Multivariate sexual dimorphism, sexual selection, and adaptation in greater antillean anolis lizards. Ecological Monographs 72, 541–559. DOI: 10.1890/0012-9615(2002)072[0541:MSDSSA]2.0.CO;2
 
-Pape, R., and J. Löffler. 2015. Seasonality of habitat selection shown to buffer alpine reindeer pastoralism against climate variability. Ecosphere 6:1–18. 
+Callaway R.M., Brooker R.W., Choler P., Kikvidze Z., Lortie C.J., Michalet R., et al. (2002). Positive interactions among alpine plants increase with stress. Nature 417, 844–848. DOI: 10.1038/nature00812
 
-Peres-Neto, P. R., D. A. Jackson, and K. M. Somers. 2003. Giving meaningful interpretation to ordination axes: Assessing loading significance in principal component analysis. Ecology 84:2347–2363. 
+Cutler D.R., Edwards T.C., Beard K.H., Cutler A., Kyle T., Gibson J., et al. (2007). Random Forests for Classification in Ecology Published by : Ecological Society of America. Ecology 88, 2783–2792
 
-Peres-Neto, P. R., D. A. Jackson, and K. M. Somers. 2005. How many principal components? stopping rules for determining the number of non-trivial axes revisited. Computational Statistics and Data Analysis 49:974–997. 
+Delgado-Baquerizo M., Gallardo A., Covelo F., Prado-Comesaña A., Ochoa V. & Maestre F.T. (2015). Differences in thallus chemistry are related to species-specific effects of biocrust-forming lichens on soil nutrients and microbial communities. Functional Ecology 29, 1087–1098. DOI: 10.1111/1365-2435.12403
 
-Severson, J. P., C. A. Hagen, J. D. Maestas, D. E. Naugle, J. T. Forbes, and K. P. Reese. 2017. Effects of conifer expansion on greater sage-grouse nesting habitat selection. Journal of Wildlife Management 81:86–95. 
+Delisle Z.J., Ransom D., Lutterschmidt W.I. & Delgado-Acevedo J. (2019a). Multiscale Spatiotemporal Habitat Selection of Northern Cottonmouths. Journal of Herpetology 53, 187. DOI: 10.1670/18-103
 
-Smith, N. 2009. Studies on selected aspects of the life history of the Western Cottonmouth ( Akgistrodon piscivorus leucostoma) along the Cumberland River Bicentennial Trail, Ashland City, Tennessee. Unpublished M.S. Thesis, Austin Peay State University, Clarksville, Tennessee.
+Delisle Z.J., Ransom D., Lutterschmidt W.I. & Delgado-Acevedo J. (2019b). Site-specific differences in the spatial ecology of northern cottonmouths. Ecosphere 10, 1–11. DOI: 10.1002/ecs2.2557
+
+Devictor V., Julliard R. & Jiguet F. (2008). Distribution of specialist and generalist species along spatial gradients of habitat disturbance and fragmentation. Oikos 117, 507–514. DOI: 10.1111/j.2008.0030-1299.16215.x
+
+Dormann C.F., Elith J., Bacher S., Buchmann C., Carl G., Carré G., et al. (2013). Collinearity: A review of methods to deal with it and a simulation study evaluating their performance. Ecography 36, 027–046. DOI: 10.1111/j.1600-0587.2012.07348.x
+
+Durso A.M., Willson J.D. & Winne C.T. (2013). Habitat influences diet overlap in aquatic snake assemblages. Journal of Zoology 291, 185–193. DOI: 10.1111/jzo.12061
+
+Elliser C.R. & Herzing D.L. (2016). Changes in interspecies association patterns of Atlantic bottlenose dolphins, Tursiops truncatus, and Atlantic spotted dolphins, Stenella frontalis, after demographic changes related to environmental disturbance. Marine Mammal Science 32, 602–618. DOI: 10.1111/mms.12289
+
+Enst C.. & Ernst E.M. (2011). Venomous Reptiles of the United States, Canada, and Northern Mexico, Vol.1. JHU Press.
+
+Escoriza D. & Hassine J. Ben (2017). Niche separation among north-west African semi-aquatic reptiles. Hydrobiologia 797, 47–56. DOI: 10.1007/s10750-017-3157-8
+
+Eskew E.A., Willson J.D. & Winne C.T. (2009). Ambush site selection and ontogenetic shifts in foraging strategy in a semi-aquatic pit viper, the Eastern cottonmouth. Journal of Zoology 277, 179–186. DOI: 10.1111/j.1469-7998.2008.00527.x
+
+Ford N.B. (2002). Ecology of the western cottonmouth (Agkistrodon piscivorus leucostoma) in Northeastern Texas. Biology of the Vipers 1987, 167–178
+
+Ford N.B., Brischoux F. & Lancaster D. (2004). Reproduction in the western cottonmouth, Agkistrodon piscivorus leucostoma, in a floodplain forest. The Southwestern Naturalist 49, 465–471. DOI: 10.1016/j.numecd.2015.12.008
+
+Foster S.A., Garcia V.B. & Town M.Y. (1988). Cannibalism as the cause of an ontogenetic shift in habitat use by fry of the threespine stickleback. Oecologia 74, 577–585. DOI: 10.1007/BF00380056
+
+Fournier B., Gillet F., Le Bayon R.C., Mitchell E.A.D. & Moretti M. (2015). Functional responses of multitaxa communities to disturbance and stress gradients in a restored floodplain. Journal of Applied Ecology 52, 1364–1373. DOI: 10.1111/1365-2664.12493
+
+Fulbright M. (2014). A true generalist; habitat selection by cottonmouth snakes (Agkistrodon piscivorus). M.S. Thesis, Austin Peay State University, Clarksville, Tennessee
+
+Gerisch M., Agostinelli V., Henle K. & Dziock F. (2012). More species, but all do the same: contrasting effects of flood disturbance on ground beetle functional and species diversity. Oikos 121, 508–515. DOI: 10.1111/j.1600-0706.2011.19749.x
+
+Gibbs J. (1998). Amphibian movements in response to forest edges, roads, and streambeds in southern new england. Journal of Wildlife Management 62, 584–589
+
+Glaudas X., Andrews K.M., Willson J.D. & Gibbons J.W. (2007). Migration patterns in a population of cottonmouths (Agkistrodon piscivorus) inhabiting an isolated wetland. Journal of Zoology 271, 119–124. DOI: 10.1111/j.1469-7998.2006.00232.x
+
+Gloyd H. & Conant R. (1990). Snakes of the Agkistrodon complex: a monographic review. St. Louis, MO. Society for the Study of Amphibians and Reptiles.
+
+Greenbaum E. (2004). The influence of prey-scent stimuli on predatory behavior of the North American copperhead Agkistrodon contortrix (Serpentes: Viperidae). Behavioral Ecology 15, 345–350. DOI: 10.1093/beheco/arh011
+
+Han H., Guo X. & Yu H. (2016). Variable selection using mean decrease accuracy and mean decrease gini based on random forest. IEEE, 219–224. DOI: 10.1109/ICSESS.2016.7883053
+
+Hill J.G. & Beaupre S.J. (2008). Body size, growth, and reproduction in a population of western cottonmouths (Agkistrodon piscivorus leucostoma) in the Ozark Mountains of Northwest Arkansas. Copeia 2008, 105–114. DOI: 10.1643/ch-06-125
+Himes J.G. (2003). Diet composition of Nerodia sipedon and its dietary overlap with and chemical recognition of Agkistrodon piscivorus. Amphibia-Reptilia 24, 181–188
+
+Hupp C.R. (2000). Hydrology, geomorphology and vegetation of coastal plain rivers in the south-easthern USA. Hydrological Processes 14, 2991–3010
+
+Isaac L.A. & Gregory P.T. (2007). Aquatic versus terrestrial locomotion: comparative performance of two ecologically contrasting species of European natricine snakes. Journal of Zoology 273, 56–62. DOI: 10.1111/j.1469-7998.2007.00299.x
+
+Junk W.J., Bayley P.B. & Sparks R.E. (1989). The flood pulse concept. International Large River Symposium, 110–127
+
+Keren-Rotem T., Bouskila A. & Geffen E. (2006). Ontogenetic habitat shift and risk of cannibalism in the common chameleon (Chamaeleo chamaeleon). 
+
+Behavioral Ecology and Sociobiology 59, 723–731. DOI: 10.1007/s00265-005-0102-z
+
+Koons D.N., Birkhead R.D., Boback S.M., Williams M.I. & Greene M.P. (2009). The effect of body size on cottonmouth (Agkistrodon piscivorus) survival, recapture probability, and behavior in an Alabama swamp. Herpetological Conservation and Biology 4, 221–235
+
+Levin S.A. (1970). Community equalibria and stability, and extension of the competitive exclusion principle. The American Naturalist 104, 413–423
+
+Luiselli L. (2006). Resource partitioning and interspecific competition in snakes: The search for general geographical and guild patterns. Oikos 114, 193–211. DOI: 10.1111/j.2006.0030-1299.14064.x
+
+Macarthur R. & Wilson E. (1967). The Theory of Island Biogeography. Princeton University Press, Princeton, New Jersey.
+
+Magalhães M.F., Beja P., Canas C. & Collares-Pereira M.J. (2002). Functional heterogeneity of dry-season fish refugia across a Mediterranean catchment: The role of habitat and predation. Freshwater Biology 47, 1919–1934. DOI: 10.1046/j.1365-2427.2002.00941.x
+
+Marvier M., Kareiva P. & Neubert M.G. (2004). Habitat destruction, fragmentation, and disturbance promote invasion by habitat generalists in a multispecies metapopulation. Risk Analysis 24, 869–878. DOI: 10.1111/j.0272-4332.2004.00485.x
+
+Mason N.W.H., De Bello F., Doležal J. & Lepš J. (2011). Niche overlap reveals the effects of competition, disturbance and contrasting assembly processes in experimental grassland communities. Journal of Ecology 99, 788–796. DOI: 10.1111/j.1365-2745.2011.01801.x
+
+Mayor S.J., Schneider D.C., Schaefer J.A. & Mahoney S.P. (2009). Habitat selection at multiple scales. Écoscience 16, 238–247. DOI: 10.2980/16-2-3238
+
+Mazzotti F.J. & Brandt L.A. (1994). Ecology of the American alligator in a seasonally fluctuating environment. In: Davis D, Ogden J (eds) Everglades: the ecosystem and its restoration. St. Lucie Press, Delray Beach, FL.
+
+McHuron E.A., Robinson P.W., Simmons S.E., Kuhn C.E., Fowler M. & Costa D.P. (2016). Foraging strategies of a generalist marine predator inhabiting a dynamic environment. Oecologia 182, 995–1005. DOI: 10.1007/s00442-016-3732-0
+
+McKnight D., Harmon J., McKnight J. & Ligon D. (2014). Notes on the diets of 7 sympatric snakes. Herpetological Notes 7, 171–177
+
+Mitsch W.J. & Gosselink J.G. (2000). Wetlands, 3rd edn. John Wiley & Sons, Inc.
+
+Mueller A. & Gienger C.M. (2019). Comparative thermal ecology of Agkistrodon contortrix and Agkistrodon piscivorus. Journal of Thermal Biology, 73–80. DOI: 10.1016/J.JTHERBIO.2018.12.009
+
+Murphy M.A., Evans J.S. & Storfer A. (2010). Quantifying Bufo boreas connectivity in Yellowstone National Park with landscape genetics. Ecology 91, 252–261. DOI: 10.1890/08-0879.1
+
+Mushinsky H., Hebrard J.J. & Vodopich D.S. (1982). Ontogeny of water snake foraging ecology. Ecological Society of America 63, 1624–1629
+
+Oksanen J., Guillaume - Blanchet, F. Friendly M., Kindt R., Legendre P., McGlinn D., Minchin P.R., et al. (2019). Community Ecology Package “vegan”
+
+Pearson D., Shine R. & How R. (2002). Sex-specific niche partitioning and sexual size dimorphism in Australian pythons (Morelia spilota imbricata). Biological Journal of the Linnean Society 77, 113–125. DOI: 10.1046/j.1095-8312.1999.00075.x
+
+Peres-Neto P.R., Jackson D.A. & Somers K.M. (2003). Giving meaningful interpretation to ordination axes: Assessing loading significance in principal component analysis. Ecology 84, 2347–2363. DOI: 10.1890/00-0634
+
+Peres C. (1994). Primate responses to phenological changes in an amazonian terra firme forest. Biotropica 26, 98–112
+
+Poff N.L. & Zimmerman J.K.H. (2010). Ecological responses to altered flow regimes: A literature review to inform the science and management of environmental flows. Freshwater Biology 55, 194–205. DOI: 10.1111/j.1365-2427.2009.02272.x
+
+Reinert H.K. (1984). Habitat variation within sympatric snake populations. Ecology 65, 1673–1682. DOI: 10.2307/1939146
+
+Robertson I.C. & Weatherhead P.J. (1992). The role of temperature in microhabitat selection by northern water snakes (Nerodia sipedon). Canadian Journal of Zoology 70, 417–422. DOI: 10.1139/z92-063
+
+Robinson J.A. (2019). Estimated use of water in the Cumberland River watershed in 2010 and projections of public-supply water use to 2040. U.S. Geological Survey: Scientific Investigations Report 2018-5130, 62. DOI: 10.3133/sir20185130
+
+Roe J., Kingsbury B. & Herbert N. (2003). Wetland and upland use patterns in semi-aquatic snakes: implications for wetland conservation. Wetlands 23, 1003–1014. DOI: 10.1672/0277-5212(2003)023[1003:WAUUPI]2.0.CO;2
+
+Roe J.H., Kingsbury B.A. & Herbert N.R. (2004). Comparative water snake ecology: conservation of mobile animals that use temporally dynamic resources. Biological Conservation 118, 79–89. DOI: 10.1016/j.biocon.2003.07.010
+
+Rosenblatt A.E., Nifong J.C., Heithaus M.R., Mazzotti F.J., Cherkiss M.S., Jeffery B.M., et al. (2015). Factors affecting individual foraging specialization and temporal diet stability across the range of a large “generalist” apex predator. Oecologia 178, 5–16. DOI: 10.1007/s00442-014-3201-6
+
+Rossetti M.R., Tscharntke T., Aguilar R. & Batáry P. (2017). Responses of insect herbivores and herbivory to habitat fragmentation: a hierarchical meta-analysis. Ecology Letters 20, 264–272. DOI: 10.1111/ele.12723
+
+Roth E.D. (2005). Spatial ecology of a cottonmouth (Agkistrodon piscivorus) population in East Texas. Journal of Herpetology 39, 312–315. DOI: 10.1670/134-04N
+
+Semlitsch R.D. & Bodie J.R. (2003). Biological criteria for buffer zones around wetlands and riparian habitats for amphibians and reptiles. Conservation Biology 17, 1219–1228. DOI: 10.1046/j.1523-1739.2003.02177.x
+
+Severson J.P., Hagen C.A., Maestas J.D., Naugle D.E., Forbes J.T. & Reese K.P. (2017). Effects of conifer expansion on greater sage-grouse nesting habitat selection. Journal of Wildlife Management 81, 86–95. DOI: 10.1002/jwmg.21183
+
+Shine R., Shine T. & Shine B. (2003). Intraspecific habitat partitioning by the sea snake Emydocephalus annulatus (Serpentes, Hydrophiidae): the effects of sex, body size, and colour pattern. Biological Journal of the Linnean Society 80, 1–10. DOI: 10.1046/j.1095-8312.2003.00213.x
+
+Smith J.A., Thomas A.C., Levi T., Wang Y. & Wilmers C.C. (2018). Human activity reduces niche partitioning among three widespread mesocarnivores. Oikos 127, 890–901. DOI: 10.1111/oik.04592
+
+Smith N. (2009). Studies on selected aspects of the life history of the western cottonmouth (Akgistrodon piscivorus leucostoma) along the Cumberland River Bicentennial Trail, Ashland City, Tennessee. M.S. Thesis, Austin Peay State University, Clarksville, Tennessee
+
+Sol D., Lapiedra O. & González-Lagos C. (2013). Behavioural adjustments for a life in the city. Animal Behaviour 85, 1101–1112. DOI: 
+10.1016/j.anbehav.2013.01.023
+
+Spencer E.E., Newsome T.M. & Dickman C.R. (2017). Prey selection and dietary flexibility of three species of mammalian predator during an irruption of non-cyclic prey. Royal Society Open Science 4. DOI: 10.1098/rsos.170317
+
+Steen D.A., Mcclure C.J.W., Brock J.C., Craig Rudolph D., Pierce J.B., Lee J.R., et al. (2014). Snake co-occurrence patterns are best explained by habitat and hypothesized effects of interspecific interactions. Journal of Animal Ecology 83, 286–295. DOI: 10.1111/1365-2656.12121
+
+Steenhof K. & Kochert M. (1988). Dietary responses of three raptor species to changing prey densities in a natural environment. British Ecological Society 57, 37–48
+
+Stireman J.O. & Singer M.S. (2018). Tritrophic niches of insect herbivores in an era of rapid environmental change. Current Opinion in Insect Science 29, 117–125. DOI: 10.1016/j.cois.2018.07.008
+
+Subalusky A.L., Fitzgerald L.A. & Smith L.L. (2009). Ontogenetic niche shifts in the American alligator establish functional connectivity between aquatic systems. Biological Conservation 142, 1507–1514. DOI: 10.1016/j.biocon.2009.02.019
+
+Turić N., Temunović M., Radović A., Vignjević G., Sudarić Bogojević M. & Merdić E. (2015). Flood pulses drive the temporal dynamics of assemblages of aquatic insects (Heteroptera and Coleoptera) in a temperate floodplain. Freshwater Biology 60, 2051–2065. DOI: 10.1111/fwb.12629
+
+Vincent S.E., Herrel A. & Irschick D.J. (2004). Ontogeny of intersexual head shape and prey selection in the pitviper Agkistrodon piscivorus. Biological Journal of the Linnean Society 81, 151–159. DOI: 10.1111/j.1095-8312.2004.00282.x
+
+Vitt L.J. (2000). Ecological consequences of body size in neonatal and small-bodied lizards in the neotropics. Herpetological Monographs 14, 388–400
+
+Weatherhead P.J. & Robertson I.C. (1992). Thermal constraints on swimming performance and escape response of northern water snakes (Nerodia sipedon). Canadian Journal of Zoology 70, 94–98. DOI: 10.1139/z92-014
+
+Wickham H. (2016). Ggplot2: Elegant graphics for data analysis
+
+Willson J.D., Winne C.T., Dorcas M.E. & Gibbons J.W. (2006). Post-drought responses of semi-aquatic snakes inhabiting an isolated wetland: insights on different strategies for persistence in a dynamic habitat. Wetlands 26, 1071–1078. DOI: 10.1672/0277-5212(2006)26[1071:PROSSI]2.0.CO;2
+
+Willson J.D., Winne C.T., Pilgrim M.A., Romanek C.S. & Gibbons J.W. (2010). Seasonal variation in terrestrial resource subsidies influences trophic niche width and overlap in two aquatic snake species: a stable isotope approach. Oikos 119, 1161–1171. DOI: 10.1111/j.1600-0706.2009.17939.x
+
+Winemiller K.O., Fitzgerald D.B., Bower L.M. & Pianka E.R. (2015). Functional traits, convergent evolution, and periodic tables of niches. Ecology Letters 18, 737–751. DOI: 10.1111/ele.12462
+
+Winne C.T. & Hopkins W.A. (2006). Influence of sex and reproductive condition on terrestrial and aquatic locomotor performance in the semi-aquatic snake Seminatrix pygaea. Functional Ecology 20, 1054–1061. DOI: 10.1111/j.1365-2435.2006.01180.x
+
+Winter T.C. & Rosenberry D.O. (1998). Hydrology of prairie pothole wetlands during drought and deluge: A 17-year study of the Cottonwood Lake wetland complex in North Dakota in the perspective of longer term measured and proxy hydrological records. Climatic Change 40, 189–209. DOI: 10.1023/A:1005448416571
