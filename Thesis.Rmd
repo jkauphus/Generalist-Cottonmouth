@@ -94,9 +94,9 @@ Cheatham <- county %>%
 ggplot(data = agk_xy, aes(x=longitude, y=latitude)) +
   geom_polygon(data = us, aes(x=long, y = lat, group = group), fill = "dark green", color="black") +
   geom_polygon(data = tn, aes(x=long, y = lat, group = group), fill = "dark green", color = "black") + 
-  geom_point(aes(x=longitude, y=latitude), color = "red") +
   stat_density2d(aes(fill = stat(level)), alpha= .25, geom = "polygon", data = agk_xy, n = 40)+
   scale_fill_gradient(low="yellow", high = "red")+
+  geom_point(aes(x=longitude, y=latitude), color = "red") +
   geom_polygon(data = Cheatham, aes(x=long, y = lat, group = group), shape = 5,fill = "Dark Blue", color="black") + 
   xlab("Longitude") + 
   ylab("Latitude") +
@@ -197,7 +197,7 @@ p2<-ggplot(discharge, aes(x =discharge$datetime, y= discharge$V4))+
 
 p2<-p2+scale_x_date(breaks=date_breaks("6 months"), labels = date_format("%b %y"))
 
-hydrogrid<-plot_grid(p1,p2, ncol = 1, nrow = 2)
+hydrogrid<-plot_grid(p1,p2, ncol = 1, align = "v")
 
 #If needing black and white
 
@@ -215,7 +215,7 @@ discharge[,2]<-as.Date(discharge[,2])
 discharge[,4]<-discharge[,3]*0.0283168
 
 p2<-ggplot(discharge, aes(x =discharge$datetime, y= discharge$V4))+
-  geom_line(color = "#636363")+
+  geom_line(color = "black")+
   xlab("")+
   ylab("Discharge (cubic meters per second)")+
   ggtitle("USGS 03431800 Sycamore Creek Near Ashland City, TN")+
@@ -223,7 +223,7 @@ p2<-ggplot(discharge, aes(x =discharge$datetime, y= discharge$V4))+
 
 p2<-p2+scale_x_date(breaks=date_breaks("6 months"), labels = date_format("%b %y"))
 
-hydrogrid1<-plot_grid(p1,p2, ncol = 1, nrow = 2)
+hydrogrid1<-plot_grid(p1,p2, ncol = 1, align = "v")
 ```
 #### Colored tab
 ```{r colored hydrograph, fig.height=8, fig.width=10, message=FALSE, warning=FALSE}
@@ -373,40 +373,33 @@ pcomp<-group_by(group, Group)%>%
 ### PCA {.tabset}
 
 ```{r Multivariate PCA Plots, fig.height=8, fig.width=12, message=FALSE, warning=FALSE}
-# Colored Plot
-gg_scatter1<-ggplot(data = s1, aes(Comp.1, Comp.2, color = Type))+
+##Colored Plots 
+p<-ggplot(data = s1, aes(Comp.1, Comp.2, shape = Type))+
   geom_point(size = 3.1)+
-  scale_color_manual(values = c("#F8766D","#252525","#7CAE00","#00BFC4", "#C77CFF","#969696"))+
+  scale_shape_manual(values = c(21, 19))+
   theme_bw(base_size = 24)+
   theme(panel.grid = element_blank(), panel.border = element_rect(fill= "transparent"))+
   geom_hline(yintercept = 0, lty = 2) +
   geom_vline(xintercept = 0, lty = 2)+
   xlim(-6,6)+
   ylim(-4.5,4.5)+
-  stat_ellipse(type = "norm", aes(fill = Type), 
-               show.legend = FALSE,size = 1, level = 0.95, linetype = 2)+
-  scale_fill_manual(values=c("#252525", "#969696"))+
-  geom_text(aes(4.3,2.7), label = paste("Cottonmouth"), col ="#969696", size = 9)+
-  geom_text(aes(3,-3.7), label = paste("Habitat"), col = "#252525", size = 9)+
+  stat_ellipse(type = "norm", aes(color = Type), 
+               show.legend = FALSE,size = 1, level = 0.95, linetype = 1)+
+  scale_color_manual(values=c("#969696", "#252525"))+
+  annotate("label",  x = 3.5, y = 2.7, label = "Cottonmouth", color ="#252525", size = 9)+
+  annotate("label",  x = 3, y = -3.5, label = "Habitat", color ="#969696", size = 9)+
   xlab(expression(atop("aquatic sites" %<->% "terrestrial sites", paste("PC-1 (22.6%)" ))))+
   ylab(expression(atop ("PC-2 (11.8%)", paste("low cover " %<->% "high cover"))))+
   theme(legend.position="none", legend.background = element_rect(fill="White",
-      size=0.5))
-
-p<-gg_scatter1+ geom_point(data = pcomp, aes(pcomp$Comp.1, pcomp$Comp.2, shape = Group, color =Group), size = 7, alpha= 0.8)+
-  scale_shape_manual(values = c(15,16,17,18))+
-  annotate("label", x = 0.5, y = 0.5, label = "FEMALE", color ="#F8766D")+
-  annotate("label", x = -1.1, y = 1.2, label = "JUVENILE", color ="#7CAE00")+
-  annotate("label", x = -0.5, y = -0.1, label = "MALE", color ="#00BFC4")+
-  annotate("label", x = 0.15, y = 1.65, label = "NEONATE", color ="#C77CFF")
-
+                                                                 size=0.5))
+#Adding Densities
 xdens<-axis_canvas(p, axis = "x")+
-geom_density(data =group, aes(Comp.1, color = group$Group, fill = group$Group), alpha = 0.3, size =1, linetype= "dashed")+
-scale_fill_manual(values = c("#F8766D","#7CAE00","#00BFC4", "#C77CFF"))+
-scale_color_manual(values = c("#F8766D","#7CAE00","#00BFC4", "#C77CFF"))
+  geom_density(data =group, aes(Comp.1, color = group$Group, fill = group$Group), alpha = 0.15, size =1, linetype= "dashed")+
+  scale_fill_manual(values = c("#F8766D","#7CAE00","#00BFC4", "#C77CFF"))+
+  scale_color_manual(values = c("#F8766D","#7CAE00","#00BFC4", "#C77CFF"))
 
 ydens<-axis_canvas(p, axis = "y", coord_flip = TRUE)+
-geom_density(data =group, aes(Comp.2, color = group$Group, fill = group$Group), alpha = 0.3, size =1, linetype= "dashed")+
+  geom_density(data =group, aes(Comp.2, color = group$Group, fill = group$Group), alpha = 0.15, size =1, linetype= "dashed")+
   scale_fill_manual(values = c("#F8766D","#7CAE00","#00BFC4", "#C77CFF"))+
   scale_color_manual(values = c("#F8766D","#7CAE00","#00BFC4", "#C77CFF"))+
   coord_flip()
@@ -414,66 +407,155 @@ geom_density(data =group, aes(Comp.2, color = group$Group, fill = group$Group), 
 p1<-insert_xaxis_grob(p, xdens, grid::unit(0.2, "null"), position= "top")
 p2<-insert_yaxis_grob(p1,ydens, grid::unit(0.2, "null"), position = "right")
 
-Colored<-ggdraw(p2)
+twogroup<-ggdraw(p2)
 
-#Black and White Plot
-
-gg_scatter2<-ggplot(data = s1, aes(Comp.1, Comp.2, color = Type))+
-  geom_point(size = 3.1)+
-  scale_color_manual(values = c("black","#252525","#d9d9d9","#636363","#bdbdbd","grey44"))+
+#Colored Intraspecific Group
+gg_scatter1<-ggplot(data = s1, aes(Comp.1, Comp.2, shape = Type))+
+  scale_shape_manual(values = c(15,21,16,17,18, 19))+
   theme_bw(base_size = 24)+
   theme(panel.grid = element_blank(), panel.border = element_rect(fill= "transparent"))+
   geom_hline(yintercept = 0, lty = 2) +
   geom_vline(xintercept = 0, lty = 2)+
   xlim(-6,6)+
   ylim(-4.5,4.5)+
-  stat_ellipse(type = "norm", aes(fill = Type), 
-               show.legend = FALSE,size = 1, level = 0.95, linetype = 2)+
-  scale_fill_manual(values=c("#252525", "grey44"))+
-  geom_text(aes(4.3,2.7), label = paste("Cottonmouth"), col ="grey44", size = 9)+
-  geom_text(aes(3,-3.7), label = paste("Habitat"), col = "#252525", size = 9)+
+  stat_ellipse(type = "norm", aes(color = Type), 
+               show.legend = FALSE,size = 1, level = 0.95, linetype = 1)+
+  scale_color_manual(values=c("#F8766D","#969696","#7CAE00","#00BFC4", "#C77CFF", "#252525"))+
+  annotate("label",  x = 3.2, y = 2.7, label = "Cottonmouth", color ="#252525", size = 9)+
+  annotate("label",  x = 3, y = -3.5, label = "Habitat", color ="#969696", size = 9)+
   xlab(expression(atop("aquatic sites" %<->% "terrestrial sites", paste("PC-1 (22.6%)" ))))+
   ylab(expression(atop ("PC-2 (11.8%)", paste("low cover " %<->% "high cover"))))+
   theme(legend.position="none", legend.background = element_rect(fill="White",
-      size=0.5))
+                                                                 size=0.5))
+pp<-gg_scatter1+
+  geom_point(data =pcomp, aes(pcomp$Comp.1, pcomp$Comp.2, shape = Group, color = Group), size = 7, alpha= 0.8)+
+  annotate("label", x = 0.5, y = 0.5, label = "FEMALE", color ="#F8766D")+
+  annotate("label", x = -1.1, y = 1.2, label = "JUVENILE", color ="#7CAE00")+
+  annotate("label", x = -0.5, y = -0.1, label = "MALE", color ="#00BFC4")+
+  annotate("label", x = 0.15, y = 1.65, label = "NEONATE", color ="#C77CFF")
 
-pp<-gg_scatter2+ geom_point(data = pcomp, aes(pcomp$Comp.1, pcomp$Comp.2, shape = Group, color =Group), alpha = 1, size =7)+
-  scale_shape_manual(values = c(19,19,18,17))+
-  annotate("label", x = 0.5, y = 0.5, label = "FEMALE", color ="#252525", size = 4.4)+
-  annotate("label", x = -0.9, y = 1.1, label = "JUVENILE", color ="#252525", size = 4.4)+
-  annotate("label", x = -0.5, y = -0.1, label = "MALE", color ="#252525", size = 4.4)+
-  annotate("label", x = 0.15, y = 1.65, label = "NEONATE", color ="#252525",  size = 4.4)
-
+#Adding Densities for Intraspecific Groups
 xdens1<-axis_canvas(pp, axis = "x")+
-geom_density(data =group, aes(Comp.1, fill = group$Group, linetype = Group), alpha = 0.83, size =1)+
-  scale_fill_manual(values = c("black", "#d9d9d9","#636363","#bdbdbd"))+
-  scale_linetype_manual(values = c("blank", "solid", "dashed", "dotted"))
+  geom_density(data =group, aes(Comp.1, color = group$Group, fill = group$Group), alpha = 0.15, size =1, linetype= "dashed")+
+  scale_fill_manual(values = c("#F8766D","#7CAE00","#00BFC4", "#C77CFF"))+
+  scale_color_manual(values = c("#F8766D","#7CAE00","#00BFC4", "#C77CFF"))
 
 ydens1<-axis_canvas(pp, axis = "y", coord_flip = TRUE)+
-geom_density(data =group, aes(Comp.2, fill = group$Group, linetype = Group), alpha = 0.83, size =1)+
-  scale_fill_manual(values = c("black", "#d9d9d9","#636363","#bdbdbd"))+
-  scale_linetype_manual(values = c("blank", "solid", "dashed", "dotted"))+
+  geom_density(data =group, aes(Comp.2, color = group$Group, fill = group$Group), alpha = 0.15, size =1, linetype= "dashed")+
+  scale_fill_manual(values = c("#F8766D","#7CAE00","#00BFC4", "#C77CFF"))+
+  scale_color_manual(values = c("#F8766D","#7CAE00","#00BFC4", "#C77CFF"))+
+  coord_flip()
+
+p11<-insert_xaxis_grob(pp, xdens1, grid::unit(0.2, "null"), position= "top")
+p22<-insert_yaxis_grob(p11,ydens1, grid::unit(0.2, "null"), position = "right")
+
+fourgroup<-ggdraw(p22)
+
+colored<-plot_grid(twogroup,fourgroup, nrow = 1, align = "h")
+
+##Black and White Plots
+pb<-ggplot(data = s1, aes(Comp.1, Comp.2, shape = Type))+
+  geom_point(size = 3.1)+
+  scale_shape_manual(values = c(21, 19))+
+  theme_bw(base_size = 24)+
+  theme(panel.grid = element_blank(), panel.border = element_rect(fill= "transparent"))+
+  geom_hline(yintercept = 0, lty = 2) +
+  geom_vline(xintercept = 0, lty = 2)+
+  xlim(-6,6)+
+  ylim(-4.5,4.5)+
+  stat_ellipse(type = "norm", aes(color = Type), 
+               show.legend = FALSE,size = 1, level = 0.95, linetype = 1)+
+  scale_color_manual(values=c("#969696", "#252525"))+
+  annotate("label",  x = 3.5, y = 2.7, label = "Cottonmouth", color ="#252525", size = 9)+
+  annotate("label",  x = 3, y = -3.5, label = "Habitat", color ="#969696", size = 9)+
+  xlab(expression(atop("aquatic sites" %<->% "terrestrial sites", paste("PC-1 (22.6%)" ))))+
+  ylab(expression(atop ("PC-2 (11.8%)", paste("low cover " %<->% "high cover"))))+
+  theme(legend.position="none", legend.background = element_rect(fill="White",size=0.5))
+
+#Adding Densities
+xdensb<-axis_canvas(pb, axis = "x")+
+  geom_density(data =group, aes(Comp.1, color = group$Group, fill = group$Group, linetype=group$Group), alpha = 0.95, size =1)+
+  scale_fill_manual(values = c("black", "#636363","white","#d9d9d9"))+
+  scale_color_manual(values = c("black", "black","black","black"))+
+  scale_linetype_manual(values = c("blank", "dashed", "solid", "dotted"))
+
+ydensb<-axis_canvas(pb, axis = "y", coord_flip = TRUE)+
+  geom_density(data =group, aes(Comp.2, color = group$Group, fill = group$Group, linetype=group$Group), alpha = 0.83, size =1)+
+  scale_fill_manual(values = c("black", "#636363","white","#d9d9d9"))+
+  scale_color_manual(values = c("black", "black","black","black"))+
+  scale_linetype_manual(values = c("blank", "dashed", "solid", "dotted"))+
   coord_flip()+
-  annotate("label", x = -2.4, y = 0.12, label = "FEMALE", color ="#252525", size = 3.2)+
-  annotate("label", x = 2.5, y = 0.12, label = "JUVENILE", color ="#252525", size = 3.2, alpha = 0.25)+
+  annotate("label", x = -1.9, y = 0.15, label = "FEMALE", color ="#252525", size = 3.2)+
+  annotate("label", x = 2.5, y = 0.15, label = "JUVENILE", color ="#252525", size = 3.2, alpha = 0.28)+
   annotate("label", x = 1.2, y = 0.26, label = "MALE", color ="#252525", size = 3.2)+
   annotate("label", x = 3.3, y = 0.17, label = "NEONATE", color ="#252525",  size = 3.2)
+pb1<-insert_xaxis_grob(pb, xdensb, grid::unit(0.2, "null"), position= "top")
+pb2<-insert_yaxis_grob(pb1,ydensb, grid::unit(0.2, "null"), position = "right")
 
-pp1<-insert_xaxis_grob(pp, xdens1, grid::unit(0.2, "null"), position= "top")
-pp2<-insert_yaxis_grob(pp1,ydens1, grid::unit(0.2, "null"), position = "right")
+twogroupb<-ggdraw(pb2)
 
-bw<-ggdraw(pp2)
+#Intraspecific Group
+gg_scatter1b<-ggplot(data = s1, aes(Comp.1, Comp.2, shape = Type))+
+  scale_shape_manual(values = c(15,21,19,24,18, 19))+
+  theme_bw(base_size = 24)+
+  theme(panel.grid = element_blank(), panel.border = element_rect(fill= "transparent"))+
+  geom_hline(yintercept = 0, lty = 2) +
+  geom_vline(xintercept = 0, lty = 2)+
+  xlim(-6,6)+
+  ylim(-4.5,4.5)+
+  stat_ellipse(type = "norm", aes(color = Type), 
+               show.legend = FALSE,size = 1, level = 0.95, linetype = 1)+
+  scale_color_manual(values=c("black","#969696","#636363","black","#d9d9d9","#252525"))+
+  annotate("label",  x = 3.2, y = 2.7, label = "Cottonmouth", color ="black", size = 9)+
+  annotate("label",  x = 3, y = -3.5, label = "Habitat", color ="grey44", size = 9)+
+  xlab(expression(atop("aquatic sites" %<->% "terrestrial sites", paste("PC-1 (22.6%)" ))))+
+  ylab(expression(atop ("PC-2 (11.8%)", paste("low cover " %<->% "high cover"))))
+
+ppb<-gg_scatter1b+
+  geom_point(data =pcomp, aes(pcomp$Comp.1, pcomp$Comp.2, shape = Group, color = Group, fill = Group), size = 8, alpha= 1)+
+  scale_fill_manual(values = c("black","#969696","white","black","#d9d9d9","#252525"))+
+  annotate("label", x = 0.6, y = 0.5, label = "FEMALE", color ="#252525", size = 4.5)+
+  annotate("label", x = -1.2, y = 1.1, label = "JUVENILE", color ="#252525", size = 4.5)+
+  annotate("label", x = -0.5, y = -0.1, label = "MALE", color ="#252525", size = 4.5)+
+  annotate("label", x = 0.15, y = 1.65, label = "NEONATE", color ="#252525",  size = 4.5)+
+  theme(legend.position="none", legend.background = element_rect(fill="White",size=0.5))
+
+#Adding Densities for Intraspecific Groups
+xdensb1<-axis_canvas(ppb, axis = "x")+
+  geom_density(data =group, aes(Comp.1, color = group$Group, fill = group$Group, linetype=group$Group), alpha = 0.95, size =1)+
+  scale_fill_manual(values = c("black", "#636363","white","#d9d9d9"))+
+  scale_color_manual(values = c("black", "black","black","black"))+
+  scale_linetype_manual(values = c("blank", "dashed", "solid", "dotted"))
+
+ydensb1<-axis_canvas(ppb, axis = "y", coord_flip = TRUE)+
+  geom_density(data =group, aes(Comp.2, color = group$Group, fill = group$Group, linetype=group$Group), alpha = 0.83, size =1)+
+  scale_fill_manual(values = c("black", "#636363","white","#d9d9d9"))+
+  scale_color_manual(values = c("black", "black","black","black"))+
+  scale_linetype_manual(values = c("blank", "dashed", "solid", "dotted"))+
+  coord_flip()+
+  annotate("label", x = -1.9, y = 0.15, label = "FEMALE", color ="#252525", size = 3.2)+
+  annotate("label", x = 2.5, y = 0.15, label = "JUVENILE", color ="#252525", size = 3.2, alpha = 0.28)+
+  annotate("label", x = 1.2, y = 0.26, label = "MALE", color ="#252525", size = 3.2)+
+  annotate("label", x = 3.3, y = 0.17, label = "NEONATE", color ="#252525",  size = 3.2)
+ppb1<-insert_xaxis_grob(ppb, xdensb1, grid::unit(0.2, "null"), position= "top")
+ppb2<-insert_yaxis_grob(ppb1,ydensb1, grid::unit(0.2, "null"), position = "right")
+
+
+fourgroupb<-ggdraw(ppb2)
+
+bw<-plot_grid(twogroupb,fourgroupb, nrow = 1, align = "h")
 ```
 
+
 #### Colored tab
-```{r PCA colored, fig.height=8, fig.width=12, message=FALSE, warning=FALSE}
-Colored
+```{r PCA colored, fig.height=9, fig.width=22, message=FALSE, warning=FALSE}
+colored
 ```
 
 **Figure 2:** Principal Component Analysis (PCA) of 16 environmental variables measured for A. piscivorus (cottonmouth) and available habitat comparison sites. Ellipses represent 95% confidence intervals for cottonmouth (small grey points) and available habitat (small black points). Mean component scores of the intra-specific cottonmouth conspecifics; adult males (blue/diamond/dark grey), adult females (red/ large circle/ black), juveniles (green/ large cirlce/ light grey), and neonates (purple/ triangle/ medium grey). Point density curves for conspecific groups are represented for PC-1 (above), and PC-2 (right). Linetypes of the density curves are; neonates with dotted lines, juveniles with solid lines, males with dashed, and females with no outline. PCA expresses cottonmouths to share broad similarities with the available habitat comparison sites, while neonates expressed some degree of separation toward the other cottonmouth conspecifics.
 
 #### Black and White tab
-```{r PCA black and white, fig.height=8, fig.width=12, message=FALSE, warning=FALSE}
+```{r PCA black and white, fig.height=9, fig.width=22, message=FALSE, warning=FALSE}
 bw
 ```
 
@@ -593,6 +675,39 @@ TukeyHSD(C2)
 TukeyHSD(C3)
 ```
 
+```{r BoxPlot, fig.height=5, fig.width=10, message=FALSE, warning=FALSE}
+PC1<-ggplot(group, aes(x = Group, y = group$Comp.1, color = Group))+
+  scale_color_manual(values = c("#F8766D","#7CAE00","#00BFC4", "#C77CFF"))+
+  geom_boxplot()+
+  ylab("PC-1 (22.60%)")+
+  xlab("")+
+  geom_text(aes(4, 2.5, label = paste("P= 0.233")), color = "black", size=4)+
+  theme_classic()+
+  theme(legend.position="none", legend.background = element_rect(fill="White",size=0.5))
+
+PC2<-ggplot(group, aes(x = Group, y = group$Comp.2, color = Group))+
+  scale_color_manual(values = c("#F8766D","#7CAE00","#00BFC4", "#C77CFF"))+
+  geom_boxplot()+
+  ylab("PC-1 (11.81%)")+
+  xlab("")+
+  geom_text(aes(4, 5, label = paste("P= 0.016*")), color = "black", size=4)+
+  theme_classic()+
+  theme(legend.position="none", legend.background = element_rect(fill="White",size=0.5))
+
+PC3<-ggplot(group, aes(x = Group, y = group$Comp.3, color = Group))+
+  scale_color_manual(values = c("#F8766D","#7CAE00","#00BFC4", "#C77CFF"))+
+  geom_boxplot()+
+  ylab("PC-1 (9.27%)")+
+  xlab("")+
+  geom_text(aes(4, 5, label = paste("P= 0.358")), color = "black", size=4)+
+  theme_classic()+
+  theme(legend.position="none", legend.background = element_rect(fill="White",size=0.5))
+
+plot_grid(PC1, PC2, PC3, labels=c("A)", "B)", "C)"), ncol = 3, nrow = 1)
+```
+
+**Figure:** Boxplots comparing the Principal component scores of each conspecific group for each principal component axes retained from the PCA. Significant difference between conspecific groups is represented with a p-value from an ANOVA test. 
+
 ```{r Linear Regression, fig.height=8, fig.width=15, message=FALSE, warning=FALSE}
 #Linear Regression
 mod<-lm(SVL~Comp.1,group)
@@ -647,7 +762,7 @@ LR3<-ggplot(group, aes(x= SVL, y= Comp.3))+
 plot_grid(LR1, LR2, LR3, labels=c("A)", "B)", "C)"), ncol = 3, nrow = 1)
 ```
 
-**Figure 2 A & B:** Linear regression of Principal Component scores for the comparison of habitat selection among the intra-specific cottonmouth groups(Males, Females, Juveniles, and Neonates) and their snout-vent lengths.
+**Figure 2:** Linear regression of Principal Component scores for the comparison of habitat selection among the intra-specific cottonmouth groups(Males, Females, Juveniles, and Neonates) and their snout-vent lengths.
 
 Below are the summary tables for the linear regression analysis comparing body size to each principal component.
 ```{r Linear Summary}

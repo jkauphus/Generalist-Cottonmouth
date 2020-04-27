@@ -6,6 +6,7 @@
 .RData
 *.mp4
 Thesis_files/
+*.csv
 
 # User-specific files
 .Ruserdata
