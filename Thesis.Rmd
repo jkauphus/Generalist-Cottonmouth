@@ -116,17 +116,6 @@ study<-read.csv("data/Cottonmouth-Datasheet.csv")
 ```
 ## Study site
 
-```{r Video Code, message=FALSE, warning=FALSE}
-video_path  <- "data/"
-video_files <- list.files(video_path,
-                         pattern = "\\.mp4$",
-                         recursive = TRUE,
-                         all.files = FALSE,
-                         full.names = TRUE) 
-```
-
-<iframe width="720" height="480" src="`r video_files[1]`" align="middle" frameborder="0" allowfullscreen></iframe>
-
 Data were collected along the Cumberland River Bicentennial Trail (CRBT), Cheatham County, Tennessee, USA (36˚17’ N, 87˚05’W). The site is a mixture of lowland forest, slough wetlands, upland limestone bluffs, and rocky outcrops. Cottonmouths use the upland forest and limestone bluffs as overwintering sites and occupy the lowland forest slough during the active season. The site is bordered by limestone bluffs and backwater streams along the northern portions, the Cumberland River along the west and south, and crop fields and urban development along the southern portions. These landscape features appear to largely isolate the population from dispersal and unpublished telemetry data (Smith, 2009; Fulbright, 2014) noted that snakes did not leave the approximately 76 hectare study area.  
 
 ```{r Interactive Ploty Map,  message=FALSE, warning=FALSE, cache = TRUE}
@@ -369,6 +358,14 @@ pcomp<-group_by(group, Group)%>%
             Comp.2 = mean(Comp.2),
             Comp.3 = mean(Comp.3))
 ```
+The PCA summary table with scree methods to determine components retained.
+
+```{r Scree Method, fig.height=5, fig.width=5, message=FALSE, warning=FALSE}
+summary(pc)
+screeplot(pc, type = "l")
+```
+
+The scree method retains eigenvalues that explain more variance than would be expected by random. Therefore, the largest eigenvalues above the average eigenvalue score, along with the first subsequent component below the largest eigenvalues, are retained (Jackson, 1993). 
 
 ### PCA {.tabset}
 
