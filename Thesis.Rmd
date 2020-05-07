@@ -169,9 +169,16 @@ p1<-ggplot(gauge, aes(x =gauge$datetime, y= gauge$V4))+
   xlab("")+
   ylab("Gauge Height (m)")+
   ggtitle("USGS 03435000 Cumberland River Below Cheatham Dam, TN")+
-  theme_classic(base_size = 14)
+  theme_classic(base_size = 20)
 
-p1<-p1+scale_x_date(breaks=date_breaks("6 months"), labels = date_format("%b %y"))
+p1<-p1+scale_x_date(breaks=date_breaks("6 months"), labels = date_format("%b %y"))+
+  theme(
+    plot.title = element_text(size = 20),
+    axis.title.x = element_text(size = 18),
+    axis.title.y = element_text(size = 18),
+    axis.text.x = element_text(size = 14, color = "black"),
+    axis.text.y = element_text(size = 14, color = "black")
+  )
 
 discharge<-read.csv("data/SycamoreData-USGS.csv")
 discharge[,2]<-as.Date(discharge[,2])
@@ -182,9 +189,16 @@ p2<-ggplot(discharge, aes(x =discharge$datetime, y= discharge$V4))+
   xlab("")+
   ylab("Discharge (cubic meters per second)")+
   ggtitle("USGS 03431800 Sycamore Creek Near Ashland City, TN")+
-  theme_classic(base_size = 14)
+  theme_classic(base_size = 20)
 
-p2<-p2+scale_x_date(breaks=date_breaks("6 months"), labels = date_format("%b %y"))
+p2<-p2+scale_x_date(breaks=date_breaks("6 months"), labels = date_format("%b %y"))+
+  theme(
+    plot.title = element_text(size = 20),
+    axis.title.x = element_text(size = 18),
+    axis.title.y = element_text(size = 18),
+    axis.text.x = element_text(size = 14, color = "black"),
+    axis.text.y = element_text(size = 14, color = "black")
+  )
 
 hydrogrid<-plot_grid(p1,p2, ncol = 1, align = "v")
 
@@ -195,34 +209,44 @@ p1<-ggplot(gauge, aes(x =gauge$datetime, y= gauge$V4))+
   xlab("")+
   ylab("Gauge Height (m)")+
   ggtitle("USGS 03435000 Cumberland River Below Cheatham Dam, TN")+
-  theme_classic(base_size = 14)
+  theme_classic(base_size = 20)
 
-p1<-p1+scale_x_date(breaks=date_breaks("6 months"), labels = date_format("%b %y"))
-
-discharge<-read.csv("data/SycamoreData-USGS.csv")
-discharge[,2]<-as.Date(discharge[,2])
-discharge[,4]<-discharge[,3]*0.0283168
+p1<-p1+scale_x_date(breaks=date_breaks("6 months"), labels = date_format("%b %y"))+
+  theme(
+    plot.title = element_text(size = 20),
+    axis.title.x = element_text(size = 18),
+    axis.title.y = element_text(size = 18),
+    axis.text.x = element_text(size = 14, color = "black"),
+    axis.text.y = element_text(size = 14, color = "black")
+  )
 
 p2<-ggplot(discharge, aes(x =discharge$datetime, y= discharge$V4))+
   geom_line(color = "black")+
   xlab("")+
   ylab("Discharge (cubic meters per second)")+
   ggtitle("USGS 03431800 Sycamore Creek Near Ashland City, TN")+
-  theme_classic(base_size = 14)
+  theme_classic(base_size = 20)
 
-p2<-p2+scale_x_date(breaks=date_breaks("6 months"), labels = date_format("%b %y"))
+p2<-p2+scale_x_date(breaks=date_breaks("6 months"), labels = date_format("%b %y"))+
+  theme(
+    plot.title = element_text(size = 20),
+    axis.title.x = element_text(size = 18),
+    axis.title.y = element_text(size = 18),
+    axis.text.x = element_text(size = 14, color = "black"),
+    axis.text.y = element_text(size = 14, color = "black")
+  )
 
 hydrogrid1<-plot_grid(p1,p2, ncol = 1, align = "v")
 ```
 #### Colored tab
-```{r colored hydrograph, fig.height=8, fig.width=10, message=FALSE, warning=FALSE}
+```{r colored hydrograph, fig.height=10, fig.width=10, message=FALSE, warning=FALSE}
 hydrogrid
 ```
 
 **Figure 1** (above) Hydrographs of the annual hydrology of the Cumberland River below Cheatham Dam, TN recorded at 36°19'22.26" N & 87°13'41.73" W, and Sycamore Creek Near Ashland City, TN (below) recorded at 36°19'11.89" N, & 87°03'04.29"W. Both waterways flow into Cumberland River Bicentennial Trail riverine wetland slough and were recorded within 8 km from the study site. Information was provided by the USGS National Water Information System (https://waterdata.usgs.gov/nwis).
 
 #### Black and White tab
-```{r black and white hydrograph, fig.height=8, fig.width=10, message=FALSE, warning=FALSE}
+```{r black and white hydrograph, fig.height=10, fig.width=10, message=FALSE, warning=FALSE}
 hydrogrid1
 ```
 
@@ -360,7 +384,7 @@ pcomp<-group_by(group, Group)%>%
 ```
 The PCA summary table with scree methods to determine components retained.
 
-```{r Scree Method, fig.height=5, fig.width=5, message=FALSE, warning=FALSE}
+```{r Scree Method, fig.height=4, fig.width=4, message=FALSE, warning=FALSE}
 summary(pc)
 screeplot(pc, type = "l")
 ```
@@ -388,7 +412,13 @@ p<-ggplot(data = s1, aes(Comp.1, Comp.2, shape = Type))+
   xlab(expression(atop("aquatic sites" %<->% "terrestrial sites", paste("PC-1 (22.6%)" ))))+
   ylab(expression(atop ("PC-2 (11.8%)", paste("low cover " %<->% "high cover"))))+
   theme(legend.position="none", legend.background = element_rect(fill="White",
-                                                                 size=0.5))
+                                                                 size=0.5),
+    axis.title.x = element_text(size = 26),
+    axis.title.y = element_text(size = 26),
+    axis.text.x = element_text(size = 20, color = "black"),
+    axis.text.y = element_text(size = 20, color = "black")
+  )
+
 #Adding Densities
 xdens<-axis_canvas(p, axis = "x")+
   geom_density(data =group, aes(Comp.1, color = group$Group, fill = group$Group), alpha = 0.15, size =1, linetype= "dashed")+
@@ -423,13 +453,18 @@ gg_scatter1<-ggplot(data = s1, aes(Comp.1, Comp.2, shape = Type))+
   xlab(expression(atop("aquatic sites" %<->% "terrestrial sites", paste("PC-1 (22.6%)" ))))+
   ylab(expression(atop ("PC-2 (11.8%)", paste("low cover " %<->% "high cover"))))+
   theme(legend.position="none", legend.background = element_rect(fill="White",
-                                                                 size=0.5))
+                                                                 size=0.5),
+    axis.title.x = element_text(size = 26),
+    axis.title.y = element_text(size = 26),
+    axis.text.x = element_text(size = 20, color = "black"),
+    axis.text.y = element_text(size = 20, color = "black"))
+
 pp<-gg_scatter1+
-  geom_point(data =pcomp, aes(pcomp$Comp.1, pcomp$Comp.2, shape = Group, color = Group), size = 7, alpha= 0.8)+
-  annotate("label", x = 0.5, y = 0.5, label = "FEMALE", color ="#F8766D")+
-  annotate("label", x = -1.1, y = 1.2, label = "JUVENILE", color ="#7CAE00")+
-  annotate("label", x = -0.5, y = -0.1, label = "MALE", color ="#00BFC4")+
-  annotate("label", x = 0.15, y = 1.65, label = "NEONATE", color ="#C77CFF")
+  geom_point(data =pcomp, aes(pcomp$Comp.1, pcomp$Comp.2, shape = Group, color = Group), size = 8, alpha= 0.8)+
+  annotate("label", x = 0.9, y = 0.5, label = "FEMALE", color ="#F8766D", size = 6)+
+  annotate("label", x = -1.6, y = 1.2, label = "JUVENILE", color ="#7CAE00", size = 6)+
+  annotate("label", x = -0.7, y = -0.15, label = "MALE", color ="#00BFC4", size = 6)+
+  annotate("label", x = 0.8, y = 1.7, label = "NEONATE", color ="#C77CFF", size =6)
 
 #Adding Densities for Intraspecific Groups
 xdens1<-axis_canvas(pp, axis = "x")+
@@ -467,7 +502,11 @@ pb<-ggplot(data = s1, aes(Comp.1, Comp.2, shape = Type))+
   annotate("label",  x = 3, y = -3.5, label = "Habitat", color ="#969696", size = 9)+
   xlab(expression(atop("aquatic sites" %<->% "terrestrial sites", paste("PC-1 (22.6%)" ))))+
   ylab(expression(atop ("PC-2 (11.8%)", paste("low cover " %<->% "high cover"))))+
-  theme(legend.position="none", legend.background = element_rect(fill="White",size=0.5))
+  theme(legend.position="none", legend.background = element_rect(fill="White",size=0.5),
+    axis.title.x = element_text(size = 26),
+    axis.title.y = element_text(size = 26),
+    axis.text.x = element_text(size = 20, color = "black"),
+    axis.text.y = element_text(size = 20, color = "black"))
 
 #Adding Densities
 xdensb<-axis_canvas(pb, axis = "x")+
@@ -511,11 +550,15 @@ gg_scatter1b<-ggplot(data = s1, aes(Comp.1, Comp.2, shape = Type))+
 ppb<-gg_scatter1b+
   geom_point(data =pcomp, aes(pcomp$Comp.1, pcomp$Comp.2, shape = Group, color = Group, fill = Group), size = 8, alpha= 1)+
   scale_fill_manual(values = c("black","#969696","white","black","#d9d9d9","#252525"))+
-  annotate("label", x = 0.6, y = 0.5, label = "FEMALE", color ="#252525", size = 4.5)+
-  annotate("label", x = -1.2, y = 1.1, label = "JUVENILE", color ="#252525", size = 4.5)+
-  annotate("label", x = -0.5, y = -0.1, label = "MALE", color ="#252525", size = 4.5)+
-  annotate("label", x = 0.15, y = 1.65, label = "NEONATE", color ="#252525",  size = 4.5)+
-  theme(legend.position="none", legend.background = element_rect(fill="White",size=0.5))
+  annotate("label", x = 0.8, y = 0.5, label = "FEMALE", color ="#252525", size = 6)+
+  annotate("label", x = -1.5, y = 1.2, label = "JUVENILE", color ="#252525", size = 6)+
+  annotate("label", x = -0.7, y = -0.15, label = "MALE", color ="#252525", size = 6)+
+  annotate("label", x = 0.8, y = 1.7, label = "NEONATE", color ="#252525",  size = 6)+
+  theme(legend.position="none", legend.background = element_rect(fill="White",size=0.5),
+    axis.title.x = element_text(size = 26),
+    axis.title.y = element_text(size = 26),
+    axis.text.x = element_text(size = 20, color = "black"),
+    axis.text.y = element_text(size = 20, color = "black"))
 
 #Adding Densities for Intraspecific Groups
 xdensb1<-axis_canvas(ppb, axis = "x")+
@@ -545,14 +588,14 @@ bw<-plot_grid(twogroupb,fourgroupb, nrow = 1, align = "h")
 
 
 #### Colored tab
-```{r PCA colored, fig.height=9, fig.width=22, message=FALSE, warning=FALSE}
+```{r PCA colored, fig.height=10, fig.width=22, message=FALSE, warning=FALSE}
 colored
 ```
 
 **Figure 2:** Principal Component Analysis (PCA) of 16 environmental variables measured for A. piscivorus (cottonmouth) and available habitat comparison sites. Ellipses represent 95% confidence intervals for cottonmouth (small grey points) and available habitat (small black points). Mean component scores of the intra-specific cottonmouth conspecifics; adult males (blue/diamond/dark grey), adult females (red/ large circle/ black), juveniles (green/ large cirlce/ light grey), and neonates (purple/ triangle/ medium grey). Point density curves for conspecific groups are represented for PC-1 (above), and PC-2 (right). Linetypes of the density curves are; neonates with dotted lines, juveniles with solid lines, males with dashed, and females with no outline. PCA expresses cottonmouths to share broad similarities with the available habitat comparison sites, while neonates expressed some degree of separation toward the other cottonmouth conspecifics.
 
 #### Black and White tab
-```{r PCA black and white, fig.height=9, fig.width=22, message=FALSE, warning=FALSE}
+```{r PCA black and white, fig.height=10, fig.width=22, message=FALSE, warning=FALSE}
 bw
 ```
 
@@ -705,7 +748,7 @@ plot_grid(PC1, PC2, PC3, labels=c("A)", "B)", "C)"), ncol = 3, nrow = 1)
 
 **Figure:** Boxplots comparing the Principal component scores of each conspecific group for each principal component axes retained from the PCA. Significant difference between conspecific groups is represented with a p-value from an ANOVA test. 
 
-```{r Linear Regression, fig.height=8, fig.width=15, message=FALSE, warning=FALSE}
+```{r Linear Regression, fig.height= 8, fig.width=22, message=FALSE, warning=FALSE}
 #Linear Regression
 mod<-lm(SVL~Comp.1,group)
 mod2<-lm(SVL~Comp.2,group)
@@ -719,12 +762,17 @@ LR1<-ggplot(group, aes(x= SVL, y= Comp.1))+
   geom_vline(xintercept = 600, lty = 2)+
   theme_bw(base_size = 24)+
   #geom_text(aes(900, 6, label = paste("R-squared = 0.034")), color="black")+
-  geom_text(aes(900, 2.95, label = paste("P= 0.023*")), color = "black", size=8)+
+  geom_text(aes(900, 3, label = paste("P = 0.023*")), color = "black", size=8)+
   xlab("Snout-vent length (mm)")+
   ylab(expression(atop("aquatic site" %<->% "terrestrial sites", paste("PC-1 (22.6%)" ))))+
   ylim(-3,3)+
   guides(shape = "none")+
-  theme(panel.grid = element_blank(), panel.border = element_rect(fill= "transparent"))
+  theme(panel.grid = element_blank(), panel.border = element_rect(fill= "transparent"),
+    axis.title.x = element_text(size = 28),
+    axis.title.y = element_text(size = 28),
+    axis.text.x = element_text(size = 22),
+    axis.text.y = element_text(size = 22)
+  )
 
 LR2<-ggplot(group, aes(x= SVL, y= Comp.2))+
   geom_point(size = 2)+
@@ -734,29 +782,38 @@ LR2<-ggplot(group, aes(x= SVL, y= Comp.2))+
   geom_vline(xintercept = 600, lty = 2)+
   theme_bw(base_size = 24)+
   #geom_text(aes(900, 6, label = paste("R-squared = 0.045")), color="black")+
-  geom_text(aes(900, 2.95, label = paste("P= 0.008*")), color = "black", size = 8)+
+  geom_text(aes(900, 3, label = paste("P = 0.008*")), color = "black", size = 8)+
   xlab("Snout-vent length (mm)")+
   ylab(expression(atop("low cover" %<->% "high cover", paste("PC-2 (11.8%)" ))))+
   ylim(-3,3)+
   guides(shape = "none")+
-  theme(panel.grid = element_blank(), panel.border = element_rect(fill= "transparent"))
+    theme(panel.grid = element_blank(), panel.border = element_rect(fill= "transparent"),
+    axis.title.x = element_text(size = 28),
+    axis.title.y = element_text(size = 28),
+    axis.text.x = element_text(size = 22),
+    axis.text.y = element_text(size = 22)
+  )
 
 LR3<-ggplot(group, aes(x= SVL, y= Comp.3))+
   geom_point(size = 2)+
   xlim(209, 1061)+
-  geom_smooth(method = "lm", color= "black")+
   geom_hline(yintercept = 0, lty = 2) +
   geom_vline(xintercept = 600, lty = 2)+
   theme_bw(base_size = 24)+
   #geom_text(aes(900, 6, label = paste("R-squared = 0.045")), color="black")+
-  geom_text(aes(900, 2.95, label = paste("P= 0.49")), color = "black", size = 8)+
+  geom_text(aes(900, 3, label = paste("P = 0.49")), color = "black", size = 8)+
   xlab("Snout-vent length (mm)")+
   ylab(expression(atop("low vegetation" %<->% "high vegetation", paste("PC-3 (9.2%)" ))))+
   ylim(-3,3)+
   guides(shape = "none")+
-  theme(panel.grid = element_blank(), panel.border = element_rect(fill= "transparent"))
+    theme(panel.grid = element_blank(), panel.border = element_rect(fill= "transparent"),
+    axis.title.x = element_text(size = 28),
+    axis.title.y = element_text(size = 28),
+    axis.text.x = element_text(size = 22),
+    axis.text.y = element_text(size = 22)
+  )
 
-plot_grid(LR1, LR2, LR3, labels=c("A)", "B)", "C)"), ncol = 3, nrow = 1)
+plot_grid(LR1, LR2, LR3, labels=c("A)", "B)", "C)"), label_size = 22, ncol = 3, nrow = 1)
 ```
 
 **Figure 2:** Linear regression of Principal Component scores for the comparison of habitat selection among the intra-specific cottonmouth groups(Males, Females, Juveniles, and Neonates) and their snout-vent lengths.
@@ -1037,7 +1094,7 @@ a7 # Maximum Accuracy
 a1 #Mean Accuracy
 ```
 
-```{r Variable Importance}
+```{r Variable Importance, fig.width= 15, fig.height=10}
 MDA<-randomForest::importance(a7, class = "SNAKE")
 MDA<-data.frame(MDA[,c(1,2)])
 gen<-sum(MDA[,1])
@@ -1056,9 +1113,15 @@ Q=ggplot(D, aes(x = reorder(Habitat_Variables, D$SNAKE), y = D$SNAKE))+
   geom_col(aes(fill=D$SNAKE), color = "black", width = 0.9)+
   geom_text(label=round(D$SNAKE,1), nudge_y = 0.5)+
     ylab("Relative Importance")+
-  xlab("Environmental Variables")+
+  xlab(expression(atop("Environmental Variables", paste(""))))+
   coord_flip()+
-  theme_classic(base_size = 12)+ theme(legend.position = "none")
+  theme_classic()+ 
+  theme(legend.position = "none",
+    axis.title.x = element_text(size = 24),
+    axis.title.y = element_text(size = 24),
+    axis.text.x = element_text(size = 20),
+    axis.text.y = element_text(size = 20, color = "black")
+  )
 
 Q<-Q+scale_fill_gradient2(low="white", high="black")
 ```
@@ -1083,46 +1146,77 @@ plot1<-ploty+ geom_line(size = 1.5)+
   xlab("Bare soil cover (%)")+
   ylab("Relative probability")+
   xlim(0,105)+
-  theme_light(base_size = 12)
+  theme_light()+
+  theme(axis.title.x = element_text(size = 18),
+    axis.title.y = element_text(size = 18),
+    axis.text.x = element_text(size = 16, color = "black"),
+    axis.text.y = element_text(size = 16, color = "black")
+  )
 
 plot2<-plotx+geom_line(size = 1.5)+
   xlab("Distance to Water (cm)")+
   ylab("")+
   ylim(-1.05,0.35)+
-  theme_light(base_size = 12)
+  theme_light()+
+  theme(axis.title.x = element_text(size = 18),
+    axis.title.y = element_text(size = 18),
+    axis.text.x = element_text(size = 16, color = "black"),
+    axis.text.y = element_text(size = 16, color = "black")
+  )
 
 plot3<-plotz+ geom_line(size = 1.5)+
   xlab("Rock cover (%)")+
   ylab("")+
-  theme_light(base_size = 12)
+  theme_light()+
+  theme(axis.title.x = element_text(size = 18),
+    axis.title.y = element_text(size = 18),
+    axis.text.x = element_text(size = 16, color = "black"),
+    axis.text.y = element_text(size = 16, color = "black")
+  )
 
 plot4<-plotz1+ geom_line(size = 1.5)+
   xlab("Water Depth (cm)")+
   ylab("Relative probability")+
   xlim(0,105)+
-  theme_light(base_size = 12)
+  ylim(-0.25,0.4)+
+  theme_light()+
+  theme(axis.title.x = element_text(size = 18),
+    axis.title.y = element_text(size = 18),
+    axis.text.x = element_text(size = 16, color = "black"),
+    axis.text.y = element_text(size = 16, color = "black")
+  )
 
 plot5<-plotz2+ geom_line(size = 1.5)+
   xlab("Water Cover (%)")+
   ylab("")+
   xlim(0,105)+
   ylim(-0.80, 0.25)+
-  theme_light(base_size = 12)
+  theme_light()+
+  theme(axis.title.x = element_text(size = 18),
+    axis.title.y = element_text(size = 18),
+    axis.text.x = element_text(size = 16, color = "black"),
+    axis.text.y = element_text(size = 16, color = "black")
+  )
 
 plot6<-plotz3+ geom_line(size = 1.5)+
   xlab("Distance to Cover (cm)")+
   ylab("")+
   ylim(-0.65,-0.2)+
-  theme_light(base_size = 12)
+  theme_light()+
+  theme(axis.title.x = element_text(size = 18),
+    axis.title.y = element_text(size = 18),
+    axis.text.x = element_text(size = 16, color = "black"),
+    axis.text.y = element_text(size = 16, color = "black")
+  )
 ```
 
-```{r Variable importance Plot, fig.height=6, fig.width=10}
+```{r Variable importance Plot, fig.height=10, fig.width=15}
 Q
 ```
 
 **Figure 3:** The Relative Importance (based on the Mean Decrease Accuracy) on the environmental variables from the minimum error rate random forest model on Cottonmouth (Agkistrodon piscivorus) habitat selection in Middle TN, USA. Cover variables were measured in percentage of occurance within a 1-m^2 quadrat, and all other metrics were measured in cm.
 
-```{r Partial Dependance Plots, fig.height=8, fig.width=12, message=FALSE, warning=FALSE}
+```{r Partial Dependance Plots, fig.height=8, fig.width=15, message=FALSE, warning=FALSE}
 plot_grid(plot1, plot2,plot3,plot4,plot5,plot6, labels=c("A ", "B ", "C ","D ", "E ", "F "), ncol = 3, nrow = 2)
 ```
 
