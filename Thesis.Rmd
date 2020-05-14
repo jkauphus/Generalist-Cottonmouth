@@ -708,10 +708,21 @@ gt(pcomp, rownames_to_stub = TRUE)%>%
 Below are the summary tables for the Tukey HSD tests for each principal component.
 ```{r Tukey HSD, message=FALSE, warning=FALSE}
 #PC-1
+#ANOVA
+summary(C1)
+#Tukey
 TukeyHSD(C1)
 #PC-2
+#ANOVA
+summary(C2)
+#Tukey 2
 TukeyHSD(C2)
+
 #PC-3
+#ANOVA
+summary(C3)
+
+#Tukey 3
 TukeyHSD(C3)
 ```
 
@@ -728,7 +739,7 @@ PC1<-ggplot(group, aes(x = Group, y = group$Comp.1, color = Group))+
 PC2<-ggplot(group, aes(x = Group, y = group$Comp.2, color = Group))+
   scale_color_manual(values = c("#F8766D","#7CAE00","#00BFC4", "#C77CFF"))+
   geom_boxplot()+
-  ylab("PC-1 (11.81%)")+
+  ylab("PC-2 (11.81%)")+
   xlab("")+
   geom_text(aes(4, 5, label = paste("P= 0.016*")), color = "black", size=4)+
   theme_classic()+
@@ -737,7 +748,7 @@ PC2<-ggplot(group, aes(x = Group, y = group$Comp.2, color = Group))+
 PC3<-ggplot(group, aes(x = Group, y = group$Comp.3, color = Group))+
   scale_color_manual(values = c("#F8766D","#7CAE00","#00BFC4", "#C77CFF"))+
   geom_boxplot()+
-  ylab("PC-1 (9.27%)")+
+  ylab("PC-3 (9.27%)")+
   xlab("")+
   geom_text(aes(4, 5, label = paste("P= 0.358")), color = "black", size=4)+
   theme_classic()+
