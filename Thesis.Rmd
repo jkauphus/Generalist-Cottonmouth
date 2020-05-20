@@ -730,7 +730,7 @@ TukeyHSD(C3)
 PC1<-ggplot(group, aes(x = Group, y = group$Comp.1, color = Group))+
   scale_color_manual(values = c("#F8766D","#7CAE00","#00BFC4", "#C77CFF"))+
   geom_boxplot()+
-  ylab("PC-1 (22.60%)")+
+ ylab(expression(atop("aquatic site" %<->% "terrestrial sites", paste("PC-1 (22.6%)" ))))+
   xlab("")+
   geom_text(aes(4, 2.5, label = paste("P= 0.233")), color = "black", size=4)+
   theme_classic()+
@@ -739,7 +739,7 @@ PC1<-ggplot(group, aes(x = Group, y = group$Comp.1, color = Group))+
 PC2<-ggplot(group, aes(x = Group, y = group$Comp.2, color = Group))+
   scale_color_manual(values = c("#F8766D","#7CAE00","#00BFC4", "#C77CFF"))+
   geom_boxplot()+
-  ylab("PC-2 (11.81%)")+
+  ylab(expression(atop("low cover" %<->% "high cover", paste("PC-2 (11.8%)" ))))+
   xlab("")+
   geom_text(aes(4, 5, label = paste("P= 0.016*")), color = "black", size=4)+
   theme_classic()+
@@ -748,7 +748,7 @@ PC2<-ggplot(group, aes(x = Group, y = group$Comp.2, color = Group))+
 PC3<-ggplot(group, aes(x = Group, y = group$Comp.3, color = Group))+
   scale_color_manual(values = c("#F8766D","#7CAE00","#00BFC4", "#C77CFF"))+
   geom_boxplot()+
-  ylab("PC-3 (9.27%)")+
+  ylab(expression(atop("high vegetation" %<->% "low vegetation", paste("PC-3 (9.2%)" ))))+
   xlab("")+
   geom_text(aes(4, 5, label = paste("P= 0.358")), color = "black", size=4)+
   theme_classic()+
@@ -814,7 +814,7 @@ LR3<-ggplot(group, aes(x= SVL, y= Comp.3))+
   #geom_text(aes(900, 6, label = paste("R-squared = 0.045")), color="black")+
   geom_text(aes(900, 3, label = paste("P = 0.49")), color = "black", size = 8)+
   xlab("Snout-vent length (mm)")+
-  ylab(expression(atop("low vegetation" %<->% "high vegetation", paste("PC-3 (9.2%)" ))))+
+  ylab(expression(atop("high vegetation" %<->% "low vegetation", paste("PC-3 (9.2%)" ))))+
   ylim(-3,3)+
   guides(shape = "none")+
     theme(panel.grid = element_blank(), panel.border = element_rect(fill= "transparent"),
