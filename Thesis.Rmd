@@ -23,7 +23,8 @@ output:
 ```{r Library, include=FALSE}
 packages<-c("adehabitatHR","ggmap","dismo","rgbif","rdryad","utils","readxl","ggridges","viridis","rasterVis","maps","mapdata","raster",
 "rasterImage", "data.table","ggfortify","grid","move","moveVis","OpenStreetMap","pbapply","plotly",
-"rgdal","sp","tidyverse", "dplyr", "ggplot2", "factoextra", "FactoMineR", "tidyr", "knitr", "gridExtra", "lattice", "permute", "vegan", "RVAideMemoire", "MASS", "caret", "tmap", "tmaptools", "ggsn", "leaflet", "sf", "sp", "ggmap", "randomForest", "randomForestExplainer", "rfUtilities", "faraway", "ROCR", "formattable", "kableExtra", "cowplot", "ggforce", "ggrepel", "ggExtra", "gt", "glue", "Boruta", "pdp", "ggpubr", "scales", "rinat")
+"rgdal","sp","tidyverse", "dplyr", "ggplot2", "factoextra", "FactoMineR", "tidyr", "knitr", "gridExtra", "lattice", "permute", "vegan", "MASS", "caret", "tmap", "tmaptools", "ggsn", "leaflet", "sf", "sp", "ggmap", "randomForest", "randomForestExplainer", "rfUtilities", "faraway", "ROCR", "formattable", "kableExtra", "cowplot", "ggforce", "ggrepel", "ggExtra", "gt", "glue", "Boruta", "pdp", "ggpubr", "scales", "rinat")
+
 sapply(packages, require, character.only=T)
 ```
 
@@ -59,7 +60,7 @@ In this study, we sought to understand the habitat niche space and selection str
 
 The species *A. piscivorus* are located throughout the southeast United States, and are predominenty found near wetland habitats, such as marshes, riverine sloughs, and swamps (Parkinson et al. 2000, Porras et al. 2013). 
 
-```{r Cottonmouth Data, fig.width = 8, fig.height = 8, message=FALSE, warning=FALSE, cache = TRUE}
+```{r Cottonmouth Data, fig.width = 8, fig.height = 8, message=FALSE, warning=FALSE, cache = FALSE}
 extent <- extent(-94,-78,25,40)
 
 # DISMO and GBIF
@@ -111,14 +112,14 @@ ggplot(data = agk_xy, aes(x=longitude, y=latitude)) +
 **Map 1:** The distribution of cottonmouth (*A. piscivorus*) throughouth the continental United States based on museum specimens from the GBIF database (https://www.gbif.org/). The study area was conducted in Cheatham County, TN, which is highlighted in dark blue. 
 
 # **Methods**
-```{r Dataset}
+```{r Dataset, message=FALSE, warning=FALSE}
 study<-read.csv("data/Cottonmouth-Datasheet.csv")
 ```
 ## Study site
 
 Data were collected along the Cumberland River Bicentennial Trail (CRBT), Cheatham County, Tennessee, USA (36˚17’ N, 87˚05’W). The site is a mixture of lowland forest, slough wetlands, upland limestone bluffs, and rocky outcrops. Cottonmouths use the upland forest and limestone bluffs as overwintering sites and occupy the lowland forest slough during the active season. The site is bordered by limestone bluffs and backwater streams along the northern portions, the Cumberland River along the west and south, and crop fields and urban development along the southern portions. These landscape features appear to largely isolate the population from dispersal and unpublished telemetry data (Smith, 2009; Fulbright, 2014) noted that snakes did not leave the approximately 76 hectare study area.  
 
-```{r Interactive Ploty Map,  message=FALSE, warning=FALSE, cache = TRUE}
+```{r Interactive Ploty Map, fig.width= 8, fig.height= 8, message=FALSE, warning=FALSE, cache=FALSE}
 #Setting Up Coordinates
 coord<-cbind(study$UTM_mE, study$UTM_mN)
 coord_locations<-SpatialPoints(coord,
@@ -143,15 +144,17 @@ raster <- openmap(c(max(lat.lon$y)+0.01, min(lat.lon$x)-0.01),
 raster_utm <- openproj(raster, 
               projection = "+proj=longlat +datum=WGS84")
 
-autoplot(raster_utm, expand = TRUE) + theme_bw() +
-  theme(legend.position="bottom") +
+autoplot(raster_utm, expand = TRUE)+
+  theme(legend.position="right") +
   geom_point(data=snake, aes(x,y, shape=Group, color = Group), size = 2.5, alpha = 0.8) +
   scale_shape_manual(values = c(15,16,17,18))+
   coord_fixed(xlim = c(min(habitat$x),max(habitat$x)), ylim = c(min(habitat$y),max(habitat$y)))+
   theme(axis.title = element_text(face="bold")) + labs(x="Longitude",
         y="Latitude")+
   ggtitle("Study Area")+
+  theme_bw(base_size = 20)+
   theme(plot.title = element_text(hjust = 0.5))
+
 ```
 
 **Map 2:** The locations cottonmouths were found within the study area during the active seasons (May - October) of 2012, 2013, & 2019.
@@ -159,7 +162,7 @@ autoplot(raster_utm, expand = TRUE) + theme_bw() +
 The habitat types found within the study area are the buttonbush slough in the central portion (12.6 ha), characterized by relatively open canopy, deeper water (50-150 cm), and mats of floating vegetation (Hydrocotyle ranunculoides & Ludwigia palustris) scattered throughout the slough. An open water habitat (> 100cm) is located toward the western portion of the study area. The seasonally flooded lowland forest (20.9 ha), dominated by red maples (Acer rubrum), has the denser canopy closure for the wetland, and is located between the slough and upland forest. Toward the southern portion between the slough and crop fields is a transitional edge area (15.4 ha) dominated by dense grass vegetation and occasionally floods (<10cm) in some portions throughout the year.  The upland forest habitat (16.3 ha) was dominated by oak trees (Quercus sp.) and had dense canopy closure and higher percentage of bare soil. Three main streams flow into the slough from the upland forest and provide a permanent source of water to the slough, along with periodic flooding from the Cumberland River, and groundwater seepage. A constructed levee divides the slough from adjacent crop fields, and during the fall waterfowl hunt, a culvert is opened from the levee to reduce the flooded areas.
 
 ### Hydrology Plots {.tabset}
-```{r Hydro Graphs, fig.height=8, fig.width=10}
+```{r Hydro Graphs, fig.height=8, fig.width=10, message=FALSE, warning=FALSE}
 gauge<-read.csv("data/GaugeData-USGS.csv")
 gauge[,2]<-as.Date(gauge[,2])
 gauge[,4]<-gauge[,3]*0.3048
@@ -285,7 +288,7 @@ study$`results$Land_Classification`[study$`results$Land_Classification`>11 & stu
 study$`results$Land_Classification`[study$`results$Land_Classification`>=90 & study$`results$Land_Classification`<= 95]<- "Wetland"
 ```
 
-```{r Mapping NLCD}
+```{r Mapping NLCD, message=FALSE, warning=FALSE}
 rast<-rasterToPoints(landcover)
 rast<-data.frame(rast)
 colnames(rast)<-c("X","Y", "Landcover")
@@ -618,20 +621,16 @@ names(loadings)<-c("PC-1", "PC-2", "PC-3")
 loadings<-round(loadings, digits = 3)
 loadings<-cbind(Description, loadings)
 
-row.names(loadings)<-c("Canopy Closure (%)", "Rock Cover (%)", "Leaf Cover (%)", "Vegetative Cover (%)", "Fallen Log Cover (%)","Woody Stem Height (cm)", "Cover Height (cm)", "Distance To Cover (cm)","Log Diameter (cm)", "Distance To Water (cm)", "Water Depth (cm)", "Percent Water (%)", "Percent Woody Debris (%)", "Percent Floating Vegetation (%)", "Percent Bare Soil (%)", "Mean Temperature (C)", "Eigenvalue", "Explained Variance")
+"Variable (units)"<-c("Canopy Closure (%)", "Rock Cover (%)", "Leaf Cover (%)", "Vegetative Cover (%)", "Fallen Log Cover (%)","Woody Stem Height (cm)", "Cover Height (cm)", "Distance To Cover (cm)","Log Diameter (cm)", "Distance To Water (cm)", "Water Depth (cm)", "Percent Water (%)", "Percent Woody Debris (%)", "Percent Floating Vegetation (%)", "Percent Bare Soil (%)", "Mean Temperature (C)", "Eigenvalue", "Explained Variance")
 
-gt(loadings, rownames_to_stub = TRUE, )%>%
-  tab_stubhead(label = "Variable (units)")%>%
-  cols_label(
-    Description = "Description",
-    Comp.1 = "PC-1",
-    Comp.2 = "PC-2",
-    Comp.3 = "PC-3")%>%
-  tab_row_group( group = "",
-    rows = 1:16
-  )%>%
-  tab_row_group(
-    group = "PCA Statistics",rows = c(17,18))
+loadings<-cbind(`Variable (units)`,loadings)
+names(loadings)<-c("Variable (units)", "Description", "PC-1", "PC-2", "PC-3")
+row.names(loadings)<-NULL
+
+kable(loadings) %>%
+  kable_styling("striped")%>%
+  pack_rows("PCA Statistics", 17,18)
+  
 ```
 
 **Table 2:** Results of the multivariate statistal tests PERMANOVA/PERMDISP based on the Euclidean distance comparing cottonmouth habitat selected and general habitat available to the cottonmouth within the study area.
@@ -668,7 +667,7 @@ gt(PermDisp, rownames_to_stub = TRUE)%>%
 ```
 
 Below, is the betadisper summary table that shows the average distance to the median of the multivariate space for each cottonmouth and available habitat sites recorded using the PERMDISP statistics.
-```{r Betadisper}
+```{r Betadisper, message=FALSE, warning=FALSE}
 beta
 ```
 
@@ -830,7 +829,7 @@ plot_grid(LR1, LR2, LR3, labels=c("A)", "B)", "C)"), label_size = 22, ncol = 3, 
 **Figure 2:** Linear regression of Principal Component scores for the comparison of habitat selection among the intra-specific cottonmouth groups(Males, Females, Juveniles, and Neonates) and their snout-vent lengths.
 
 Below are the summary tables for the linear regression analysis comparing body size to each principal component.
-```{r Linear Summary}
+```{r Linear Summary, message=FALSE, warning=FALSE}
 summary(mod)
 summary(mod2)
 summary(mod3)
@@ -972,13 +971,13 @@ A<-A/sum
 A
 ```
 
-```{r}
+```{r data, message=FALSE, warning=FALSE}
 #Went with the Full Model
 rf<-s1[,c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,19)]
 ```
 
 
-```{r 10-fold cross validation}
+```{r 10-fold cross validation, message=FALSE, warning=FALSE}
 #Setting up Cross Validation Training and Validation sets
 set.seed(123)
 ind<-sample(2,nrow(rf),replace = T, prob = c(0.9,0.1))
@@ -1025,7 +1024,7 @@ c10<- randomForest(Type~., data = train, ntree = 6000, importance = T)
 plot(a1)
 ```
 
-```{r Out-of-Bag}
+```{r Out-of-Bag, message=FALSE, warning=FALSE}
 OOB1<-c(a1$err.rate[6000,1],a2$err.rate[6000,1],a3$err.rate[6000,1],a4$err.rate[6000,1],a5$err.rate[6000,1],a6$err.rate[6000,1],
        a7$err.rate[6000,1],a8$err.rate[6000,1],a9$err.rate[6000,1],a10$err.rate[6000,1],b1$err.rate[6000,1],b2$err.rate[6000,1],
        b3$err.rate[6000,1],b4$err.rate[6000,1],b5$err.rate[6000,1],b6$err.rate[6000,1],b7$err.rate[6000,1],b8$err.rate[6000,1],
@@ -1034,7 +1033,7 @@ OOB1<-c(a1$err.rate[6000,1],a2$err.rate[6000,1],a3$err.rate[6000,1],a4$err.rate[
 OOB<-c(1-min(OOB1),1-mean(OOB1), 1-max(OOB1))
 ```
 
-```{r Cross-Validation}
+```{r Cross-Validation, message=FALSE, warning=FALSE}
 files<-list(a1,a2,a3,a4,a5,a6,a7,a8,a9,a10,b1,b2,b3,b4,b5,b6,b7,b8,b9,b10,c1,c2,c3,c4,c5,c6,c7,c8,c9,c10)
 
 cv<-(function(x){
@@ -1060,7 +1059,7 @@ cv_table<-data.frame(rbind(cv_max,cv_mean, cv_min))
 RandomForest_Model<-c("Maximum", "Mean", "Minimum")
 ```
 
-```{r Calculating AUC}
+```{r Calculating AUC, message=FALSE, warning=FALSE}
 
 AUC<- function(z){
 pred<-predict(z, test, type = "prob")
@@ -1080,7 +1079,7 @@ AUC<-c(max(AUC), mean(AUC), min(AUC))
 
 **Table 4:** Performance metrics for the 30-iteration random forest model on cottonmouth habitat selection compared to general habitat available within the study area.
 
-```{r Random Forest Table}
+```{r Random Forest Table, message=FALSE, warning=FALSE}
 models<-cbind(cv_table, OOB, AUC)
 models<-round(models, digits = 3)
 models<-cbind(RandomForest_Model,models)
@@ -1100,12 +1099,12 @@ gt(models)%>%
 ```
 
 Below are the summary tables for the maximum and mean random forest models of the 30-iteration models.
-```{r Maximum RF Model}
+```{r Maximum RF Model, message=FALSE, warning=FALSE}
 a7 # Maximum Accuracy
 a1 #Mean Accuracy
 ```
 
-```{r Variable Importance, fig.width= 15, fig.height=10}
+```{r Variable Importance, fig.height=10, fig.width=15, message=FALSE, warning=FALSE}
 MDA<-randomForest::importance(a7, class = "SNAKE")
 MDA<-data.frame(MDA[,c(1,2)])
 gen<-sum(MDA[,1])
@@ -1137,7 +1136,7 @@ Q=ggplot(D, aes(x = reorder(Habitat_Variables, D$SNAKE), y = D$SNAKE))+
 Q<-Q+scale_fill_gradient2(low="white", high="black")
 ```
 
-```{r Partial Dependence Plots Set up}
+```{r Partial Dependence Plots Set up, message=FALSE, warning=FALSE}
 #RF a7
 plotx<-partial(a7, pred.var = "Dist..To.Water", pdp = T, center = T, plot = T, plot.engine = "ggplot2", type = "classification", which.class = "SNAKE", train = train, rug = T)
 
@@ -1221,7 +1220,7 @@ plot6<-plotz3+ geom_line(size = 1.5)+
   )
 ```
 
-```{r Variable importance Plot, fig.height=10, fig.width=15}
+```{r Variable importance Plot, fig.height=10, fig.width=15, message=FALSE, warning=FALSE}
 Q
 ```
 
