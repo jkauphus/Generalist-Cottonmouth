@@ -5,6 +5,9 @@
 library(dplyr)
 library(ggplot2)
 library(cowplot)
+library(caret)
+library(gt)
+library(ggrepel)
 library(vegan)
 library(randomForest)
 library(randomForestExplainer)
@@ -129,6 +132,7 @@ loadings<-round(loadings, digits = 3)
 loadings<-cbind(Description, loadings)
 
 row.names(loadings)<-c("Canopy Closure (%)", "Rock Cover (%)", "Leaf Cover (%)", "Vegetative Cover (%)", "Fallen Log Cover (%)","Woody Stem Height (cm)", "Cover Height (cm)", "Distance To Cover (cm)","Log Diameter (cm)", "Distance To Water (cm)", "Water Depth (cm)", "Percent Water (%)", "Percent Woody Debris (%)", "Percent Floating Vegetation (%)", "Percent Bare Soil (%)", "Mean Temperature (C)", "Eigenvalue", "Explained Variance")
+loadings <- data.frame(loadings)
 
 gt(loadings, rownames_to_stub = TRUE, )%>%
   tab_stubhead(label = "Variable (units)")%>%
@@ -142,6 +146,7 @@ gt(loadings, rownames_to_stub = TRUE, )%>%
   )%>%
   tab_row_group(
     group = "PCA Statistics",rows = c(17,18))
+
 #ANOVA for Conspecific Differences
 pcomp<-pcomp[,2:4]
 names(pcomp)<- c( "PC-1","PC-2", "PC-3")
@@ -228,6 +233,7 @@ LR3<-ggplot(group, aes(x= SVL, y= Comp.3))+
   theme(panel.grid = element_blank(), panel.border = element_rect(fill= "transparent"))
 
 plot_grid(LR1, LR2, LR3, labels=c("A)", "B)", "C)"), ncol = 3, nrow = 1)
+
 #PC-1
 summary(mod)
 #PC-2
@@ -236,6 +242,8 @@ summary(mod2)
 summary(mod3)
 
 #Random Forest Modeling
+#Fix characters to factors
+s1$Type <- as.factor(s1$Type)
 
 #MIR Ratio for feature reduction
 rf<-s1[,c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,22)]
@@ -263,7 +271,9 @@ A
 #Remove 8 Cover Height
 
 #MIR > 0.02
+s$Type <- as.factor(s$Type)
 rf<-s[,c(1,2,3,4,5,6,7,9,10,11,12,13,14,15,16,19)]
+
 
 #Train & Test
 set.seed(123)
@@ -450,23 +460,23 @@ cv_table<-data.frame(rbind(cv_max,cv_mean, cv_min))
 RandomForest_Model<-c("Maximum", "Mean", "Minimum")
 
 #AUC for 30 models to calculate mean, min, and max
-AUC<- function(z){
-  pred<-predict(z, test, type = "prob")
-  pred<-pred[,2]
-  pred<-prediction(pred, test$Type)
+AUC <- function(model){
+  probs <- predict(model, newdata = test, type = "prob")[, 2]   # P(class2)
   
-  #AUC (Area Under The Curve)
-  auc<-performance(pred, "auc")
-  auc<-unlist(slot(auc, "y.values"))
+  pred_obj <- ROCR::prediction(probs, test$Type)
+  auc_obj  <- ROCR::performance(pred_obj, "auc")
+  auc      <- as.numeric(auc_obj@y.values[[1]])
   
+  return(auc)
 }
 
-AUC<-t(data.frame(lapply(files, AUC)))
-
-AUC<-c(max(AUC), mean(AUC), min(AUC))
+aucs <- sapply(files, AUC)   # 'files' should be a list of models
+mean_auc <- mean(aucs, na.rm = TRUE)
+min_auc  <- min(aucs, na.rm = TRUE)
+max_auc  <- max(aucs, na.rm = TRUE)
 
 #Performance Metrics Table
-models<-cbind(cv_table, OOB, AUC)
+models<-cbind(cv_table, OOB, aucs)
 models<-round(models, digits = 3)
 models<-cbind(RandomForest_Model,models)
 gt(models)%>%
@@ -511,17 +521,17 @@ Q=ggplot(D, aes(x = reorder(Habitat_Variables, D$SNAKE), y = D$SNAKE))+
 Q<-Q+scale_fill_gradient2(low="white", high="black")
 
 #Partial Dependence Plots for maximum RF model
-plotx<-partial(a7, pred.var = "Dist..To.Water", pdp = T, center = T, plot = T, plot.engine = "ggplot2", type = "classification", which.class = "SNAKE", train = train, rug = T)
+plotx<-pdp::partial(a7, pred.var = "Dist..To.Water", pdp = T, center = T, plot = T, plot.engine = "ggplot2", type = "classification", which.class = "SNAKE", train = train, rug = T)
 
-ploty<-partial(a7, pred.var = "X.Bare.soil", pdp = T, center = T, plot = T, plot.engine = "ggplot2", type = "classification", which.class = "SNAKE", train = train, rug = T)
+ploty<-pdp::partial(a7, pred.var = "X.Bare.soil", pdp = T, center = T, plot = T, plot.engine = "ggplot2", type = "classification", which.class = "SNAKE", train = train, rug = T)
 
-plotz<-partial(a7, pred.var = "Rock.Cover", pdp = T, center = T, plot = T, plot.engine = "ggplot2", type = "classification", which.class = "SNAKE", train = train, rug = T)
+plotz<-pdp::partial(a7, pred.var = "Rock.Cover", pdp = T, center = T, plot = T, plot.engine = "ggplot2", type = "classification", which.class = "SNAKE", train = train, rug = T)
 
-plotz1<-partial(a7, pred.var = "Depth", pdp = T, center = T, plot = T, plot.engine = "ggplot2", type = "classification", which.class = "SNAKE", train = train, rug = T)
+plotz1<-pdp::partial(a7, pred.var = "Depth", pdp = T, center = T, plot = T, plot.engine = "ggplot2", type = "classification", which.class = "SNAKE", train = train, rug = T)
 
-plotz2<-partial(a7, pred.var = "X.Water", pdp = T, center = T, plot = T, plot.engine = "ggplot2", type = "classification", which.class = "SNAKE", train = train, rug = T)
+plotz2<-pdp::partial(a7, pred.var = "X.Water", pdp = T, center = T, plot = T, plot.engine = "ggplot2", type = "classification", which.class = "SNAKE", train = train, rug = T)
 
-plotz3<-partial(a7, pred.var = "Dist..To.Cover", pdp = T, center = T, plot = T, plot.engine = "ggplot2", type = "classification", which.class = "SNAKE", train = train, rug = T)
+plotz3<-pdp::partial(a7, pred.var = "Dist..To.Cover", pdp = T, center = T, plot = T, plot.engine = "ggplot2", type = "classification", which.class = "SNAKE", train = train, rug = T)
 
 #Plots for top 6 variables
 plot1<-ploty+ geom_line(size = 1.5)+
