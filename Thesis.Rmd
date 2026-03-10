@@ -21,9 +21,32 @@ output:
 
 
 ```{r Library, include=FALSE}
-packages<-c("adehabitatHR","ggmap","dismo","rgbif","rdryad","utils","readxl","ggridges","viridis","rasterVis","maps","mapdata","raster",
-"rasterImage", "data.table","ggfortify","grid","move","moveVis","OpenStreetMap","pbapply","plotly",
-"rgdal","sp","tidyverse", "dplyr", "ggplot2", "factoextra", "FactoMineR", "tidyr", "knitr", "gridExtra", "lattice", "permute", "vegan", "MASS", "caret", "tmap", "tmaptools", "ggsn", "leaflet", "sf", "sp", "ggmap", "randomForest", "randomForestExplainer", "rfUtilities", "faraway", "ROCR", "formattable", "kableExtra", "cowplot", "ggforce", "ggrepel", "ggExtra", "gt", "glue", "Boruta", "pdp", "ggpubr", "scales", "rinat")
+packages <- c(
+  "caret",
+  "utils",
+  "raster",
+  "data.table",
+  "grid",
+  "vegan",
+  "permute",
+  "sp",
+  "dplyr",
+  "ggplot2",
+  "tidyr",
+  "knitr",
+  "lattice",
+  "MASS",
+  "randomForest",
+  "randomForestExplainer",
+  "ROCR",
+  "cowplot",
+  "ggrepel",
+  "gt",
+  "glue",
+  "pdp",
+  "scales",
+  "kableExtra"
+)
 
 sapply(packages, require, character.only=T)
 ```
@@ -61,12 +84,14 @@ In this study, we sought to understand the habitat niche space and selection str
 The species *A. piscivorus* are located throughout the southeast United States, and are predominenty found near wetland habitats, such as marshes, riverine sloughs, and swamps (Parkinson et al. 2000, Porras et al. 2013). 
 
 ```{r Cottonmouth Data, fig.width = 8, fig.height = 8, message=FALSE, warning=FALSE, cache = FALSE}
-extent <- extent(-94,-78,25,40)
+extent <- as.double(extent(-94,-78,25,40))
 
 # DISMO and GBIF
 #Below, code of locations from the gbif database.
 
-agk_dismo <- gbif("agkistrodon", species = "piscivorus", ext = extent, geo = TRUE, sp = TRUE, download = TRUE, removeZeros = TRUE)
+agk_dismo <- rgbif::occ_search(scientificName = "Agkistrodon piscivorus", geometry = extent)
+
+gbif("agkistrodon", species = "piscivorus", ext = extent, geo = TRUE, sp = TRUE, download = TRUE, removeZeros = TRUE)
 
 #agk_dismo <- get_inat_obs(query = "Agkistrodon piscivorus")
 # Code above, if wanting to use iNaturalist's database
@@ -121,14 +146,15 @@ Data were collected along the Cumberland River Bicentennial Trail (CRBT), Cheath
 
 ```{r Interactive Ploty Map, fig.width= 8, fig.height= 8, message=FALSE, warning=FALSE, cache=FALSE}
 #Setting Up Coordinates
-coord<-cbind(study$UTM_mE, study$UTM_mN)
-coord_locations<-SpatialPoints(coord,
-                               proj4string = CRS("+proj=utm +zone=16 +datum=WGS84"))
-lat.lon<- as.data.frame(spTransform(
-  coord_locations, CRS("+proj=longlat +datum=WGS84")))
-colnames(lat.lon)<-c("x","y")
+# Combine coordinates
+coord <- cbind(study$UTM_mE, study$UTM_mN)
 
-study<-cbind(study,lat.lon)
+# Create sf object (UTM Zone 16N, WGS84)
+coord_locations <- st_as_sf(
+  data.frame(coord),
+  coords = c("study.UTM_mE", "study.UTM_mN"),  # we’ll fix this below
+  crs = 32616  # EPSG 32616 = WGS84 / UTM zone 16N
+)
 
 #Subsets of Dataset
 
@@ -636,7 +662,7 @@ kable(loadings) %>%
 **Table 2:** Results of the multivariate statistal tests PERMANOVA/PERMDISP based on the Euclidean distance comparing cottonmouth habitat selected and general habitat available to the cottonmouth within the study area.
 ```{r PERMANOVA/PERMDISP Table, fig.height=4, fig.width=8, message=FALSE, warning=FALSE}
 #PERMANOVA
-Perm1<-adonis(s1[,c(2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,22)]~ Type, data = s1, method='eu')
+Perm1<-adonis2(s1[,c(2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,22)]~ Type, data = s1, method='eu')
 Perm1<-cbind(Perm1$aov.tab[1,4], Perm1$aov.tab[1,6])
 
 #PERMDISP
@@ -838,7 +864,11 @@ summary(mod3)
 ## Habitat Selection: Modeling Habitat Preference 
 
 ```{r Feature Selection by MIR, eval=FALSE, message=FALSE, warning=FALSE, include=FALSE}
+#Fix characters to factors
+s1$Type <- as.factor(s1$Type)
+
 rf<-s1[,c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,22)]
+
 set.seed(111)
 #Model Improvement Ratio by Cutler et al. 2010
 #Train & Test
@@ -941,7 +971,7 @@ RF<-randomForest(Type~.,train, ntree= 6000, importance= T)
 RF
 
 #OOB = 21.07, class= 0.181/0.245
-A<-data.frame(randomForest::importance(RF))
+A <-data.frame(randomForest::importance(RF))
 A
 A<-data.frame(A[,2])
 sum<-sum(A)
