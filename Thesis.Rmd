@@ -51,6 +51,15 @@ packages <- c(
 sapply(packages, require, character.only=T)
 ```
 
+```{r set fonr for Herp Cons Bio}
+library(ggplot2)
+
+theme_set(
+  theme_bw(base_family = "Times New Roman")
+)
+```
+
+
 # **Abstract**
 
 1.Wetlands are typically transitional habitats that represent a dynamic hydrologic gradient between terrestrial and aquatic systems. As hydrologic fluctuations within a wetland can cause the habitat to become periodically unsuitable and resource-limited, species with traits that can adapt to these environmental changes will be favored. Populations inhabiting highly dynamic environments with high frequencies of disturbance may have extensive niche overlap and less habitat specialization among residents. This study examined the habitat selection of cottonmouths inhabiting an isolated riverine slough along the Cumberland River (Middle Tennessee). We hypothesize that cottonmouths (Agkistrodon piscivorus) use generalist habitat selection as an adaptation to hydrologically-dynamic ecosystems, and have extensive habitat niche overlap as a result of temporal instability of habitat resources.
@@ -83,7 +92,7 @@ In this study, we sought to understand the habitat niche space and selection str
 
 The species *A. piscivorus* are located throughout the southeast United States, and are predominenty found near wetland habitats, such as marshes, riverine sloughs, and swamps (Parkinson et al. 2000, Porras et al. 2013). 
 
-```{r Cottonmouth Data, fig.width = 8, fig.height = 8, message=FALSE, warning=FALSE, cache = FALSE}
+```{r Cottonmouth Data, eval=FALSE, fig.height=8, fig.width=8, message=FALSE, warning=FALSE, cache=FALSE, include=FALSE}
 extent <- as.double(extent(-94,-78,25,40))
 
 # DISMO and GBIF
@@ -138,7 +147,7 @@ ggplot(data = agk_xy, aes(x=longitude, y=latitude)) +
 
 # **Methods**
 ```{r Dataset, message=FALSE, warning=FALSE}
-study<-read.csv("data/Cottonmouth-Datasheet.csv")
+study<-read.csv("public_data/Cottonmouth-Datasheet.csv")
 ```
 ## Study site
 
