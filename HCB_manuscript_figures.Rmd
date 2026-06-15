@@ -850,7 +850,7 @@ a7 # Maximum Accuracy
 a1 #Mean Accuracy
 ```
 
-```{r Variable Importance, fig.height=10, fig.width=15, message=FALSE, warning=FALSE}
+```{r Variable Importance, fig.width=7.2, message=FALSE, warning=FALSE}
 MDA<-randomForest::importance(a7, class = "SNAKE")
 MDA<-data.frame(MDA[,c(1,2)])
 gen<-sum(MDA[,1])
@@ -867,17 +867,19 @@ row.names(D)<-NULL
 
 ggplot(D, aes(x = reorder(Habitat_Variables, D$SNAKE), y = D$SNAKE))+
   geom_col(aes(fill=D$SNAKE), color = "black", width = 0.9)+
-  geom_text(label=round(D$SNAKE,1), nudge_y = 0.5)+
+  geom_text(label=round(D$SNAKE,1), nudge_y = 0.5, size = 4, family = "Times New Roman")+
+    #labs(subtitle = "Snake Model")+
     ylab("Relative Importance")+
+    #xlab("")+
   xlab(expression(atop("Environmental Variables", paste(""))))+
   coord_flip()+
-  theme_classic()+
+  #theme_classic()+
   theme(text = element_text(family = "Times New Roman")) +
   theme(legend.position = "none",
-    axis.title.x = element_text(size = 24),
-    axis.title.y = element_text(size = 24),
-    axis.text.x = element_text(size = 20),
-    axis.text.y = element_text(size = 20, color = "black")
+    axis.title.x = element_text(size = 12),
+    axis.title.y = element_text(size = 12),
+    axis.text.x = element_text(size = 10),
+    axis.text.y = element_text(size = 10, color = "black"),
   ) +
   scale_fill_gradient2(low="white", high="black")
 
