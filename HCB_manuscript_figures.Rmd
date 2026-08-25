@@ -44,6 +44,7 @@ packages <- c(
   "scales",
   "kableExtra",
   "cowplot",
+  "patchwork",
   "vegan"
 )
 
@@ -57,7 +58,7 @@ theme_set(
 ```
 
 ```{r Dataset, message=FALSE, warning=FALSE}
-study <- read.csv("public_data/Cottonmouth-Datasheet.csv")
+study <- read.csv("data/Cottonmouth-Datasheet.csv")
 ```
 
 ### Hydrology Plots
