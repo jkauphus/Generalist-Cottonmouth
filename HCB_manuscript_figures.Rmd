@@ -1,7 +1,7 @@
 ---
 title: "Figures for Herp. Cons. Bio Manuscript - Code extracted from Kauphusman Thesis"
 author: "C.M. Gienger"
-date: "6/10/2026"
+date: "9/22/2026"
 output:
     rmdformats::readthedown:
       self_contained: true
@@ -108,7 +108,7 @@ p2<-ggplot(discharge, aes(x =discharge$datetime, y= discharge$V4))+
 
 (p1 / p2) #stack plots using patchwork
 
-ggsave("HCB_figs/fig2_hydrographs.jpg")
+ggsave("HCB_figs/figS1_hydrographs.jpg")
 #ggsave("HCB_figs/fig1_hydrographs.jpg", width = 3.43, height = 3)
 ```
 
@@ -276,9 +276,20 @@ colored<-plot_grid(twogroup,fourgroup, nrow = 1, align = "h")
 ```
 
 #### Colored PCA Plot
-```{r PCA colored, fig.height=10, fig.width=22, message=FALSE, warning=FALSE}
-colored
-ggsave("HCB_figs/fig3_PCA_ellipses.jpg")
+```{r PCA colored, fig.height= 8, fig.width=22, message=FALSE, warning=FALSE}
+#combine using patchwork
+
+(twogroup + fourgroup) +
+  plot_annotation(tag_levels = "A") &
+  theme(
+    text = element_text(family = "Times New Roman"),
+    plot.tag = element_text(
+      size = 24,
+      #face = "bold"
+    )
+  )
+
+ggsave("HCB_figs/fig2_PCA_ellipses.jpg")
 ```
 
 **Figure 2:** Principal Component Analysis (PCA) of 16 environmental variables measured for A. piscivorus (cottonmouth) and available habitat comparison sites. Ellipses represent 95% confidence intervals for cottonmouth (small grey points) and available habitat (small black points). Mean component scores of the intra-specific cottonmouth conspecifics; adult males (blue/diamond/dark grey), adult females (red/ large circle/ black), juveniles (green/ large cirlce/ light grey), and neonates (purple/ triangle/ medium grey). Point density curves for conspecific groups are represented for PC-1 (above), and PC-2 (right). Linetypes of the density curves are; neonates with dotted lines, juveniles with solid lines, males with dashed, and females with no outline. PCA expresses cottonmouths to share broad similarities with the available habitat comparison sites, while neonates expressed some degree of separation toward the other cottonmouth conspecifics.
@@ -561,7 +572,7 @@ LR3<-ggplot(group, aes(x= SVL, y= Comp.3))+
 (LR1 + LR2 + LR3) +
   plot_annotation(tag_levels = 'A')
 
-ggsave("HCB_figs/fig4_SVL_PCA_regressions.jpg")
+ggsave("HCB_figs/fig3_SVL_PCA_regressions.jpg")
 ```
 
 **Figure 2:** Linear regression of Principal Component scores for the comparison of habitat selection among the intra-specific cottonmouth groups(Males, Females, Juveniles, and Neonates) and their snout-vent lengths.
@@ -884,10 +895,14 @@ ggplot(D, aes(x = reorder(Habitat_Variables, D$SNAKE), y = D$SNAKE))+
   ) +
   scale_fill_gradient2(low="white", high="black")
 
-ggsave("HCB_figs/fig5_variable_importance.jpg")
+ggsave("HCB_figs/fig4_variable_importance.jpg")
 ```
 
 **Figure 3:** The Relative Importance (based on the Mean Decrease Accuracy) on the environmental variables from the minimum error rate random forest model on Cottonmouth (Agkistrodon piscivorus) habitat selection in Middle TN, USA. Cover variables were measured in percentage of occurance within a 1-m^2 quadrat, and all other metrics were measured in cm.
+
+If you want readers to see the actual model-predicted partial probabilities, use: center = "FALSE" in setting up partial dependence plots.
+
+a7 is the RF model with highest accuracy.
 
 ```{r Partial Dependence Plots Set up, message=FALSE, warning=FALSE}
 #RF a7
@@ -918,7 +933,7 @@ theme_partial_dependence <- theme_bw() +
 pd_plot1<-ploty+ 
   geom_line(size = 1)+
   xlab("Bare Soil Cover (%)")+
-  ylab("Relative Probability")+
+  ylab("Partial Dependence")+
   xlim(0,105) +
   theme_partial_dependence
 
@@ -938,7 +953,7 @@ pd_plot3<-plotz+
 pd_plot4<-plotz1+ 
   geom_line(size = 1)+
   xlab("Water Depth (cm)")+
-  ylab("Relative Probability")+
+  ylab("Partial Dependence")+
   xlim(0,105)+
   ylim(-0.25,0.4)+
   theme_partial_dependence
@@ -962,7 +977,7 @@ pd_plot6<-plotz3+
 (pd_plot1 + pd_plot2 + pd_plot3) / (pd_plot4 + pd_plot5 + pd_plot6) +
   plot_annotation(tag_levels = 'A')
 
-ggsave("HCB_figs/fig6_partial_dependence_plots.jpg")
+ggsave("HCB_figs/fig5_partial_dependence_plots.jpg")
 
 ```
 
