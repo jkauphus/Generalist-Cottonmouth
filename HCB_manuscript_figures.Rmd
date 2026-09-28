@@ -45,10 +45,16 @@ packages <- c(
   "kableExtra",
   "cowplot",
   "patchwork",
-  "vegan"
+  "vegan",
+  "grateful"
 )
 
 sapply(packages, require, character.only=T)
+
+grateful::cite_packages(
+  out.dir = "./bibfile",
+  skip.missing = TRUE
+) # save bibliographic report to bibfile folder
 ```
 
 ```{r set font for Herp Cons Bio}
