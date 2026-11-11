@@ -129,6 +129,27 @@ juvenile<- study %>% subset(Group == "JUVENILE")
 YOY<- study %>% subset(Group == "YOY")
 ```
 
+```{r summary of SVL, TL, and Mass for each group}
+bodysize_summary <- study %>%
+  filter(Type == "SNAKE") %>%
+  group_by(Group) %>%
+  summarise(
+    n = n(),
+    across(
+      c(SVL, TL, MASS),
+      list(
+        mean = ~mean(.x, na.rm = TRUE),
+        SD = ~sd(.x, na.rm = TRUE)
+      ),
+      .names = "{.col}_{.fn}"
+    ),
+    .groups = "drop"
+  )
+
+bodysize_summary
+```
+
+
 ## Habitat Selection: Ecological Niche 
 
 List of the variables of the dataset for Multivariate and random forest analyses. 
@@ -894,8 +915,8 @@ ggplot(D, aes(x = reorder(Habitat_Variables, D$SNAKE), y = D$SNAKE))+
   #theme_classic()+
   theme(text = element_text(family = "Times New Roman")) +
   theme(legend.position = "none",
-    axis.title.x = element_text(size = 12),
-    axis.title.y = element_text(size = 12),
+    axis.title.x = element_text(size = 14),
+    axis.title.y = element_text(size = 14),
     axis.text.x = element_text(size = 10),
     axis.text.y = element_text(size = 10, color = "black"),
   ) +
