@@ -135,14 +135,12 @@ bodysize_summary <- study %>%
   group_by(Group) %>%
   summarise(
     n = n(),
-    across(
-      c(SVL, TL, MASS),
-      list(
-        mean = ~mean(.x, na.rm = TRUE),
-        SD = ~sd(.x, na.rm = TRUE)
-      ),
-      .names = "{.col}_{.fn}"
-    ),
+    SVL_mean = mean(SVL, na.rm = TRUE),
+    SVL_SD = sd(SVL, na.rm = TRUE),
+    TL_mean = mean(TL, na.rm = TRUE),
+    TL_SD = sd(TL, na.rm = TRUE),
+    MASS_mean = mean(MASS, na.rm = TRUE),
+    MASS_SD = sd(MASS, na.rm = TRUE),
     .groups = "drop"
   )
 
