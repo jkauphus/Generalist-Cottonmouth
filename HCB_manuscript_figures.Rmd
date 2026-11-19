@@ -309,12 +309,14 @@ colored<-plot_grid(twogroup,fourgroup, nrow = 1, align = "h")
   theme(
     text = element_text(family = "Times New Roman"),
     plot.tag = element_text(
-      size = 24,
-      #face = "bold"
-    )
+      size = 36,
+      face = "plain"
+    ),
+    plot.tag.position = c(0.02, 0.95)
   )
 
-ggsave("HCB_figs/fig2_PCA_ellipses.jpg")
+ggsave("HCB_figs/fig2_PCA_ellipses.jpg",
+       width = 22, height = 8, units = "in", dpi = 300)
 ```
 
 **Figure 2:** Principal Component Analysis (PCA) of 16 environmental variables measured for A. piscivorus (cottonmouth) and available habitat comparison sites. Ellipses represent 95% confidence intervals for cottonmouth (small grey points) and available habitat (small black points). Mean component scores of the intra-specific cottonmouth conspecifics; adult males (blue/diamond/dark grey), adult females (red/ large circle/ black), juveniles (green/ large cirlce/ light grey), and neonates (purple/ triangle/ medium grey). Point density curves for conspecific groups are represented for PC-1 (above), and PC-2 (right). Linetypes of the density curves are; neonates with dotted lines, juveniles with solid lines, males with dashed, and females with no outline. PCA expresses cottonmouths to share broad similarities with the available habitat comparison sites, while neonates expressed some degree of separation toward the other cottonmouth conspecifics.
@@ -538,8 +540,7 @@ LR1<-ggplot(group, aes(x= SVL, y= Comp.1))+
   geom_vline(xintercept = 600, lty = 2)+
   theme_bw(base_size = 24)+
   #geom_text(aes(900, 6, label = paste("R-squared = 0.034")), color="black")+
-  geom_text(aes(900, 3, label = paste("P = 0.02")), color = "black", size=10, family = "Times New Roman")+
-  #geom_text(aes(900, 3, label = paste("P = 0.023")), color = "black", size=10, family = "Times New Roman")+
+  geom_text(aes(900, 3, label = paste("P = 0.023")), color = "black", size=10, family = "Times New Roman", fontface = "italic")+
   xlab("Snout-Vent Length (mm)")+
   ylab(expression(atop("aquatic site" %<->% "terrestrial sites", paste("PC-1 (22.6%)" ))))+
   ylim(-3,3)+
@@ -560,7 +561,7 @@ LR2<-ggplot(group, aes(x= SVL, y= Comp.2))+
   geom_vline(xintercept = 600, lty = 2)+
   theme_bw(base_size = 24)+
   #geom_text(aes(900, 6, label = paste("R-squared = 0.045")), color="black")+
-  geom_text(aes(900, 3, label = paste("P = 0.008")), color = "black", size = 10, family = "Times New Roman")+
+  geom_text(aes(900, 3, label = paste("P = 0.008")), color = "black", size = 10, family = "Times New Roman", fontface = "italic")+
   xlab("Snout-Vent Length (mm)")+
   ylab(expression(atop("low cover" %<->% "high cover", paste("PC-2 (11.8%)" ))))+
   ylim(-3,3)+
@@ -580,7 +581,7 @@ LR3<-ggplot(group, aes(x= SVL, y= Comp.3))+
   geom_vline(xintercept = 600, lty = 2)+
   theme_bw(base_size = 24)+
   #geom_text(aes(900, 6, label = paste("R-squared = 0.045")), color="black")+
-  geom_text(aes(900, 3, label = paste("P = 0.49")), color = "black", size = 10, family = "Times New Roman")+
+  geom_text(aes(900, 3, label = paste("P = 0.490")), color = "black", size = 10, family = "Times New Roman", fontface = "italic")+
   xlab("Snout-Vent Length (mm)")+
   ylab(expression(atop("high vegetation" %<->% "low vegetation", paste("PC-3 (9.2%)" ))))+
   ylim(-3,3)+
@@ -595,9 +596,18 @@ LR3<-ggplot(group, aes(x= SVL, y= Comp.3))+
 
 #combine using patchwork
 (LR1 + LR2 + LR3) +
-  plot_annotation(tag_levels = 'A')
+  plot_annotation(tag_levels = "A") &
+  theme(
+    plot.tag = element_text(
+      size = 36,
+      family = "Times New Roman",
+      face = "plain"
+    )
+  )
 
-ggsave("HCB_figs/fig3_SVL_PCA_regressions.jpg")
+#ggsave("HCB_figs/fig3_SVL_PCA_regressions.jpg")
+ggsave("HCB_figs/fig3_SVL_PCA_regressions.jpg",
+       width = 22, height = 8, units = "in", dpi = 300)
 ```
 
 **Figure 2:** Linear regression of Principal Component scores for the comparison of habitat selection among the intra-specific cottonmouth groups(Males, Females, Juveniles, and Neonates) and their snout-vent lengths.
@@ -897,7 +907,7 @@ MDA[,1]<-(MDA[,1]/gen)*100
 MDA[,2]<-(MDA[,2]/gen)*100
 
 #Plotting
-Habitat_Variables <- c("Canopy Closure", "Rock Cover", "Leaf Cover", "Vegetative Cover","Fallen Log Cover","Woody Stem Height", "Cover Height", "Distance To Cover","Log Diameter","Distance To Water", "Water Depth", "Percent Water", "Percent Woody Debris", "Percent Floating Vegetation", "Percent Bare Soil", "Mean Temperature")
+Habitat_Variables <- c("Canopy Closure", "Rock Cover", "Leaf Cover", "Vegetative Cover","Fallen Log Cover","Woody Stem Height", "Cover Height", "Distance To Cover","Log Diameter","Distance To Water", "Water Depth", "Percentage Water", "Percentage Woody Debris", "Percentage Floating Vegetation", "Percentage Bare Soil", "Mean Temperature")
 
 D <-cbind(Habitat_Variables,MDA)
 row.names(D)<-NULL
